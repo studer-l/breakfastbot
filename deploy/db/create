@@ -1,0 +1,23 @@
+#!/bin/sh
+if [ -z "$BREAKFASTBOT_DB_PW" ]; then
+    echo "!!!!!!"
+    echo "WARNING: Setting password to default value"
+    echo "!!!!!!"
+    BREAKFASTBOT_DB_PW=VerySecret
+fi
+
+CONTAINER=breakfastbot_db
+
+docker stop $CONTAINER
+docker rm $CONTAINER
+
+docker create \
+  --name $CONTAINER \
+  -e POSTGRES_PASSWORD=${BREAKFASTBOT_DB_PW} \
+  --restart=always \
+  --network localnet \
+  -v "$(pwd)"/data:/var/lib/postgresql/data \
+  -p 5432:5432 \
+  postgres:11-alpine
+
+docker restart $CONTAINER

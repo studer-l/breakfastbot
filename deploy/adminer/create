@@ -1,0 +1,14 @@
+#!/bin/sh
+CONTAINER="breakfastbot_adminer0"
+docker stop ${CONTAINER}
+docker rm ${CONTAINER}
+
+docker create \
+  --name=${CONTAINER} \
+  --restart="no" \
+  -p 8080:8080 \
+  --network localnet \
+  --restart=always \
+  adminer:4.7
+
+docker start ${CONTAINER}

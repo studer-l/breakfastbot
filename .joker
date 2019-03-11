@@ -1,0 +1,2 @@
+{ :known-macros [mount.core/defstate
+                 clojure.java.jdbc/with-db-transaction]}

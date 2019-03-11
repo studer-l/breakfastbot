@@ -1,0 +1,9 @@
+.projectile
+.lein-repl-history
+.nrepl-port
+dev.env
+target/
+/.lein-failures
+/dev-config.edn
+.eastwood
+prod-config.edn
