@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/cci-demo-clojure
+    docker:
+      - image: circleci/clojure:lein-2.9.1
+    environment:
+      JVM_OPTS: -Xmx3200m
+      LEIN_ROOT: true
+      LEIN_SNAPSHOTS_IN_RELEASE: true
+    steps:
+      - checkout
+      - restore_cache:
+          key: studerl-breakfastbot-{{ checksum "project.clj" }}
+      - run: lein deps
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: studerl-breakfastbot-{{ checksum "project.clj" }}
+      - run: lein do test, uberjar
+      - store_artifacts:
+          path: target/breakfastbot-standalone.jar
+          destination: uberjar
+      - store_artifacts:
+          path: target/breakfastbot.jar
+          destination: jar
