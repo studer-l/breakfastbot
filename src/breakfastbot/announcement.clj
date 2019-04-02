@@ -39,7 +39,7 @@
     (debug "Going to announcing breakfast...")
     (let [attendee-data (db-ops/prepare-breakfast db/db datetime)]
       (debug "Scheduled breakfast:" attendee-data)
-      (zulip/send-stream-message zulip-conn "Breakfast Club"
+      (zulip/send-stream-message zulip-conn "Monday Breakfast"
                                  (chatting/date->subject datetime)
                                  (announce-breakfast-message attendee-data))
       (debug "Breakfast announced!"))))

@@ -1,5 +1,5 @@
 #!/bin/sh
-CONTAINER="breakfastbot_adminer0"
+CONTAINER="breakfastbot_adminer"
 docker stop ${CONTAINER}
 docker rm ${CONTAINER}
 
