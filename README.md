@@ -1,4 +1,5 @@
 # Breakfastbot
+[![CircleCI](https://circleci.com/gh/studer-l/breakfastbot/tree/master.svg?style=svg)](https://circleci.com/gh/studer-l/breakfastbot/tree/master)
 
 Every Monday the [Distran](https://distran.ch) team has breakfast together at
 the office, with one person responsible for bringing (fresh!) food items.
