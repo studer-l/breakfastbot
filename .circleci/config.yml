@@ -22,12 +22,12 @@ jobs:
       - setup_remote_docker
       - restore_cache:
           key: studerl-breakfastbot-{{ checksum "project.clj" }}
-      - run: lein deps
+      - run: lein do deps, cloverage || true; lein clean
       - save_cache:
           paths:
             - ~/.m2
           key: studerl-breakfastbot-{{ checksum "project.clj" }}
-      - run: lein test
+      - run: lein with-profile test cloverage --no-text --codecov --junit
       - run: lein uberjar
       - run: docker build -f deploy/app/Dockerfile -t $IMAGE_NAME .
       - run: docker save -o image.tar $IMAGE_NAME
