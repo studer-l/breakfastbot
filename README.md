@@ -17,6 +17,6 @@ created this Zulip chatbot! 😀
 
 ## Deployment
 
-Requires a database, *probably* postgres.
+Requires a postgres database.
 Also requires Zulip bot credentials.
 See `test-config.edn` for configuration.
