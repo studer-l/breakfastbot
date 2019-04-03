@@ -16,6 +16,8 @@
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [migratus "1.2.3"]
                  [org.clojars.studerl/clojure-zulip "0.2.0"]]
+  :plugins [[lein-cloverage "1.1.1"]]
+  :cloverage {:html? false}
   :resource-paths ["resources"]
   :main breakfastbot.core
   :profiles {:dev {:jvm-opts ["-Dconf=dev-config.edn"]}

@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.0.2
+
 executors:
   builder:
     docker:
@@ -22,12 +26,11 @@ jobs:
       - setup_remote_docker
       - restore_cache:
           key: studerl-breakfastbot-{{ checksum "project.clj" }}
-      - run: lein deps
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: studerl-breakfastbot-{{ checksum "project.clj" }}
-      - run: lein test
+      - run: lein with-profile test cloverage --no-text --codecov --junit
+      - codecov/upload:
+          file: target/coverage/codecov.json
+      - store_test_results:
+          path: target/
       - run: lein uberjar
       - run: docker build -f deploy/app/Dockerfile -t $IMAGE_NAME .
       - run: docker save -o image.tar $IMAGE_NAME
@@ -41,6 +44,10 @@ jobs:
       - store_artifacts:
           path: target/breakfastbot.jar
           destination: breakfastbot.jar
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: studerl-breakfastbot-{{ checksum "project.clj" }}
 
   publish-docker:
     executor: builder
