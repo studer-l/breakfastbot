@@ -28,7 +28,7 @@
         (throw
          (ex-info (str "The date " (jt/format "d.M.yyyy" date)
                        " is too far in the future!") {:public true}))
-        (> 0 (jt/time-between (jt/local-date) date :days))
+        (neg? (jt/time-between (jt/local-date) date :days))
         (throw
          (ex-info (str "The date " (jt/format "d.M.yyyy" date)
                        " is in the past!") {:public true}))

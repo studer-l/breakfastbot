@@ -2,7 +2,7 @@
   (:require [clojure.string :as s]))
 
 (defn bullet-list-item [depth item]
-  (str (apply str (repeat depth " ")) "* " item))
+  (str (s/join (repeat depth " ")) "* " item))
 
 (defn bullet-list [items]
   (->> items

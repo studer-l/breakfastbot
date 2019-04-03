@@ -47,9 +47,9 @@
 (def trigger-word "@**Breakfast Bot**")
 
 (defn- strip-trigger-word [msg]
-  (let [minlength (+ 1 (count trigger-word))]
+  (let [minlength (inc (count trigger-word))]
     (if (< minlength (count msg))
-      (subs msg(+ 1 (count trigger-word))))))
+      (subs msg(inc (count trigger-word))))))
 
 (defn- starts-with-trigger? [msg]
   (s/starts-with? msg trigger-word))
