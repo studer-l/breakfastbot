@@ -20,4 +20,6 @@
   :main breakfastbot.core
   :profiles {:dev {:jvm-opts ["-Dconf=dev-config.edn"]}
              :test {:jvm-opts ["-Dconf=test-config.edn"]}
-             :uberjar {:aot :all}})
+             :uberjar {:jar-name "breakfastbot.jar"
+                       :uberjar-name "breakfastbot-standalone.jar"
+                       :aot :all}})

@@ -1,4 +1,5 @@
 # Breakfastbot
+[![CircleCI](https://circleci.com/gh/studer-l/breakfastbot/tree/master.svg?style=svg)](https://circleci.com/gh/studer-l/breakfastbot/tree/master)
 
 Every Monday the [Distran](https://distran.ch) team has breakfast together at
 the office, with one person responsible for bringing (fresh!) food items.
@@ -16,6 +17,6 @@ created this Zulip chatbot! 😀
 
 ## Deployment
 
-Requires a database, *probably* postgres.
+Requires a postgres database.
 Also requires Zulip bot credentials.
 See `test-config.edn` for configuration.

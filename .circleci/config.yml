@@ -1,0 +1,66 @@
+version: 2.1
+executors:
+  builder:
+    docker:
+      - image: circleci/clojure:lein-2.9.1
+        environment:
+          JVM_OPTS: -Xmx3200m
+          LEIN_ROOT: true
+          LEIN_SNAPSHOTS_IN_RELEASE: true
+          IMAGE_NAME: "studerl/breakfastbot"
+      - image: circleci/postgres:11-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: VerySecret
+
+jobs:
+  build:
+    executor: builder
+    working_directory: ~/breakfastbot
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          key: studerl-breakfastbot-{{ checksum "project.clj" }}
+      - run: lein deps
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: studerl-breakfastbot-{{ checksum "project.clj" }}
+      - run: lein test
+      - run: lein uberjar
+      - run: docker build -f deploy/app/Dockerfile -t $IMAGE_NAME .
+      - run: docker save -o image.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
+      - store_artifacts:
+          path: target/breakfastbot-standalone.jar
+          destination: breakfastbot-standalone.jar
+      - store_artifacts:
+          path: target/breakfastbot.jar
+          destination: breakfastbot.jar
+
+  publish-docker:
+    executor: builder
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run: docker load -i /tmp/workspace/image.tar
+      - run: |
+          echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+          docker push $IMAGE_NAME:latest
+
+workflows:
+  version: 2
+  build-master:
+    jobs:
+      - publish-docker:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - build
