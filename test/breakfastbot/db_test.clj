@@ -148,7 +148,7 @@
                     ;; insert mock team
                     (doall (for [user mock-users] (db/insert-member db/db user)))
                     ;; sign them up for ALL THE BREAKFASTS
-                    (db-ops/prime-attendance)
+                    (db-ops/prime-attendance db/db)
                     ;; When we add a new member
                     (db-ops/add-new-team-member
                      "natalie.newcomer@company.com" "nat")
