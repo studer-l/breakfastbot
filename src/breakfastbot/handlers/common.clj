@@ -13,7 +13,8 @@
               (fn [fullname]
                 (str "OK 🙄 New responsible for bringing breakfast is "
                      (md/mention fullname)))
-              :cancel "BREAKFAST CANCELED!"})
+              :cancel "BREAKFAST CANCELED!"
+              :welcome (fn [email] (str "🎉🎈 Welcome " (md/mention email) "!! 🎉🎈"))})
 
 (defn try-parse-date
   [when]
