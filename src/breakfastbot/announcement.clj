@@ -15,12 +15,13 @@
        (map md/mention)
        (md/bullet-list)))
 
-(defn- announce-breakfast-message
+(defn announce-breakfast-message
   "Create breakfast announcement from attendee + bringer list"
   [attendee-data]
   (str "🤖📣 BREAKFAST SCHEDULED 🤖📣\n\n"
        "Attendees:\n"
        (attendee-bullet-list attendee-data)
+       "\nTotal attendees: " (-> attendee-data :attendees count Integer.)
        "\n\nResponsible for bringing Breakfast: "
        (md/mention (:fullname (:bringer attendee-data)))))
 
