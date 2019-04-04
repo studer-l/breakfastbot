@@ -38,7 +38,7 @@
         (if-let [{email :email} (db-ops/choose-bringer db/db when)]
           ((:change-responsible answers) email)
           (:cancel answers))
-        (:ok answers)))))
+        (:ok-unhappy answers)))))
 
 (def sign-off-handler {:matcher parse-sign-off
                        :action(fn [{who :who when :when}]

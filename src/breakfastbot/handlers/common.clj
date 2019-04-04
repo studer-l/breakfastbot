@@ -4,7 +4,8 @@
             [clojure.tools.logging :refer [info debug]]
             [breakfastbot.markdown :as md]))
 
-(def answers {:ok "Alright 🙄"
+(def answers {:ok-unhappy "Alright 🙄"
+              :ok-happy "Great!"
               :error-already-signed-off "ERROR: You already signed off! 😤"
               :error-no-event "ERROR: No event scheduled for this date 👎"
               :change-responsible
