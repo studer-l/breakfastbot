@@ -51,7 +51,7 @@
 ;; testing the handler is superbly complicated
 (t/deftest test-sign-off-action
   (t/testing "can sign-off prior to commitment"
-    (t/is (= (:ok answers)
+    (t/is (= (:ok-unhappy answers)
              (do (prepare-mock-db)
                  ;; at this stage no bringer is selected for this date yet
                  (sut/sign-off "marissa.mucci@company.com" date date)))))
@@ -69,7 +69,7 @@
     (t/is (= ((:change-responsible answers) "miles.mcinnis@company.com")
              (sut/sign-off "catherina.carollo@company.com" date date))))
   (t/testing "when the last person signs off, breakfast is canceled"
-    (t/is (= (:ok answers)
+    (t/is (= (:ok-unhappy answers)
              (sut/sign-off "stan.sandiford@company.com" date date)))
     (t/is (= (:cancel answers)
              (sut/sign-off "miles.mcinnis@company.com" date date)))))
