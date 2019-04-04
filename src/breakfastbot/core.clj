@@ -3,7 +3,7 @@
                                            add-sync-handler]]
             [breakfastbot.actions :refer [handlers dispatch-handlers]]
             [breakfastbot.config :refer [config]]
-            [breakfastbot.db-ops :refer [prime-attendance db]]
+            [breakfastbot.db-ops :refer [prime-attendance]]
             [breakfastbot.db :refer [db]]
             [mount.core :as mount :refer [defstate]]
             [migratus.core :as migratus]
