@@ -3,7 +3,8 @@
                                            add-sync-handler]]
             [breakfastbot.actions :refer [handlers dispatch-handlers]]
             [breakfastbot.config :refer [config]]
-            [breakfastbot.db-ops :refer [prime-attendance]]
+            [breakfastbot.db-ops :refer [prime-attendance db]]
+            [breakfastbot.db :refer [db]]
             [mount.core :as mount :refer [defstate]]
             [migratus.core :as migratus]
             [mount-up.core :as mu]
@@ -41,4 +42,4 @@
       (info "Database up to date")))
   (mount/start)
   ;; ensure we are primed for next 30 days now rather than waiting for background task
-  (prime-attendance))
+  (prime-attendance db))

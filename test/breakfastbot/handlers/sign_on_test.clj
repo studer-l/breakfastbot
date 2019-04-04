@@ -7,9 +7,14 @@
             [breakfastbot.db-test :refer [prepare-mock-db unpopular-date mock-emails]]
             [clojure.test :as t]))
 
-;; parser already well tested by sign-off
-
 (mount/start #'db/db)
+
+;; parser already well tested by sign-off; this is just to ensure it matches `can me`
+(t/deftest sign-on-parser
+  (t/testing "matches most simple string"
+    (let [result (sut/parse-sign-on  "person@company.com" "can me")]
+      (t/is (= "person@company.com" (:who result)))
+      (t/is (jt/local-date? (:when result))))))
 
 (t/deftest sign-on-action
   (t/testing "can sign on on known date"

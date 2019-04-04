@@ -6,6 +6,7 @@
 
 (def answers {:ok-unhappy "Alright 🙄"
               :ok-happy "Great!"
+              :ack "🤖 ACKNOWLEDGED 🤖"
               :error-already-signed-off "ERROR: You already signed off! 😤"
               :error-no-event "ERROR: No event scheduled for this date 👎"
               :change-responsible

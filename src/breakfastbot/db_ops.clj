@@ -20,11 +20,11 @@
 
 (defn prime-attendance
   "Add people preemptively to the attendance table"
-  ([] ;; default 30 days in the future
+  ([dbspec] ;; default 30 days in the future
    (let [primed-from (jt/local-date)
          primed-to (jt/plus primed-from (jt/days 30))]
-     (prime-attendance primed-to)))
-  ([prime-until]
+     (prime-attendance dbspec primed-to)))
+  ([dbspec prime-until]
    (let [primed-from (currently-primed)
          primed-to prime-until]
      (info "Priming from"
@@ -33,7 +33,7 @@
            (jt/format "d.M.yyyy" primed-to))
      (dorun (for [monday (mondays primed-from primed-to)]
               (prime-breakfast monday)))
-     (db/set-last-primed db/db {:date (jt/max primed-from primed-to)}))))
+     (db/set-last-primed dbspec {:date (jt/max primed-from primed-to)}))))
 
 (defn add-new-team-member
   "They are signed up for all currently scheduled breakfasts and their bring
