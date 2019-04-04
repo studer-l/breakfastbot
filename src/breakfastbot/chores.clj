@@ -2,6 +2,7 @@
   (:require [clojure.core.async :as a]
             [clojure.tools.logging :refer [info]]
             [mount.core :refer [defstate]]
+            [breakfastbot.db :refer [db]]
             [breakfastbot.db-ops :as db-ops]
             [breakfastbot.announcement :refer [announce-breakfast]]
             [java-time :as jt]))
@@ -23,7 +24,7 @@
 (def day-in-millis (* hour-in-millis 24))
 
 (defstate attendance-prime-task
-  :start (repeatedly-async-call day-in-millis db-ops/prime-attendance)
+  :start (repeatedly-async-call day-in-millis (fn [] db-ops/prime-attendance db))
   :stop (a/>!! :stop attendance-prime-task))
 
 (defstate announce-breakfast-task

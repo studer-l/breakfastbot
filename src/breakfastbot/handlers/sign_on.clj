@@ -17,7 +17,7 @@
   [who when]
   ;; ensure that we primed until this date...
   (debug "performing sign-on for" who "on" when)
-  (db-ops/prime-attendance when)
+  (db-ops/prime-attendance db/db when)
   ;; is this a valid event at all?
   (if-not (:exists (db/any-attendance-on-date db/db {:day when}))
     (:error-no-event answers)
@@ -26,6 +26,6 @@
       (:ok-happy answers))))
 
 (def sign-on-handler {:matcher parse-sign-on
-                      :action(fn [{who :who when :when}] (sign-on who when))
+                      :action (fn [{who :who when :when}] (sign-on who when))
                       :help (str "\"@**breakfastbot** can [me|email] [date]\""
                                  " -- Sign (yourself) up for (next) event")})

@@ -5,6 +5,7 @@
             [breakfastbot.handlers.sign-off :refer [sign-off-handler]]
             [breakfastbot.handlers.sign-on :refer [sign-on-handler]]
             [breakfastbot.handlers.who-brings :refer [who-handler]]
+            [breakfastbot.handlers.override :refer [override-bringer-handler]]
             [breakfastbot.handlers.add-member :refer [add-member-handler]]))
 
 ;; Structure of Handler is a map with the keys :matcher :action  and :help
@@ -29,7 +30,8 @@
 ;; Single line (formated) help string
 
 ;; all handlers except help-handler
-(def basic-handlers [who-handler sign-off-handler add-member-handler sign-on-handler])
+(def basic-handlers [who-handler sign-off-handler add-member-handler
+                     sign-on-handler override-bringer-handler])
 (def handlers (conj basic-handlers (handlers->help-handler basic-handlers)))
 
 (def help-handler

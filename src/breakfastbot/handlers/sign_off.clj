@@ -20,7 +20,7 @@
   ;; ensure that we primed until this date...
   (debug "performing sign-off for" who "on" when
          "considering next breakfast is on" next-date)
-  (db-ops/prime-attendance when)
+  (db-ops/prime-attendance db/db when)
   (let [was-supposed-to-bring
         (and (= when next-date)
              (= who (:email (db/get-bringer-on db/db {:day next-date}))))]
