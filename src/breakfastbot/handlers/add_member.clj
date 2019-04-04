@@ -2,6 +2,7 @@
   (:require [clojure-zulip.core :as zulip]
             [clojure.tools.logging :refer [debug]]
             [breakfastbot.chatting :refer [zulip-conn]]
+            [breakfastbot.handlers.common :refer [answers]]
             [breakfastbot.db-ops :as db-ops]))
 
 (defn parse-add-member
@@ -23,7 +24,8 @@
   [email]
   (let [fullname (get-zulip-user-by-email email)]
     (if fullname
-      (do (db-ops/add-new-team-member email fullname) "Success")
+      (do (db-ops/add-new-team-member email fullname)
+          ((:welcome answers) fullname))
       (throw (ex-info (str "Could not find any user with email " email)
                       {:public true})))))
 
