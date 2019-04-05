@@ -1,9 +1,9 @@
 (ns breakfastbot.handlers.add-member
-  (:require [clojure-zulip.core :as zulip]
-            [clojure.tools.logging :refer [debug]]
-            [breakfastbot.chatting :refer [zulip-conn]]
+  (:require [breakfastbot.chatting :refer [zulip-conn]]
+            [breakfastbot.db-ops :as db-ops]
             [breakfastbot.handlers.common :refer [answers]]
-            [breakfastbot.db-ops :as db-ops]))
+            [clojure-zulip.core :as zulip]
+            [clojure.tools.logging :refer [debug]]))
 
 (defn parse-add-member
   [_ message]
@@ -28,7 +28,6 @@
           ((:welcome answers) fullname))
       (throw (ex-info (str "Could not find any user with email " email)
                       {:public true})))))
-
 
 (def add-member-handler {:matcher parse-add-member
                          :action add-member-action

@@ -1,12 +1,12 @@
 (ns breakfastbot.handlers.sign-off-test
-  (:require [breakfastbot.handlers.sign-off :as sut]
-            [clojure.test :as t]
-            [breakfastbot.date-utils :refer [next-monday]]
-            [breakfastbot.handlers.common :refer [answers]]
-            [java-time :as jt]
-            [mount.core :as mount]
+  (:require [breakfastbot.date-utils :refer [next-monday]]
             [breakfastbot.db :as db]
-            [breakfastbot.db-test :refer [prepare-mock-db]]))
+            [breakfastbot.db-test :refer [prepare-mock-db]]
+            [breakfastbot.handlers.common :refer [answers]]
+            [breakfastbot.handlers.sign-off :as sut]
+            [clojure.test :as t]
+            [java-time :as jt]
+            [mount.core :as mount]))
 
 (mount/start #'db/db)
 

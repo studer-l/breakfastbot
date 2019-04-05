@@ -1,7 +1,7 @@
 (ns breakfastbot.chores-test
   (:require [breakfastbot.chores :as sut]
-            [clojure.test :as t]
-            [clojure.core.async :as a]))
+            [clojure.core.async :as a]
+            [clojure.test :as t]))
 
 ;; testing an async endless loop... this is going to be funky
 ;; basic idea: Hand a "test verification" channel into the function that gets

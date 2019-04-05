@@ -1,9 +1,9 @@
 (ns breakfastbot.handlers.override
-  (:require [clojure.tools.logging :refer [info debug]]
+  (:require [breakfastbot.db :as db]
             [breakfastbot.db-ops :as db-ops]
-            [breakfastbot.db :as db]
+            [breakfastbot.handlers.common :refer [answers person-date-matcher]]
             [clojure.java.jdbc :as jdbc]
-            [breakfastbot.handlers.common :refer [answers person-date-matcher]]))
+            [clojure.tools.logging :refer [info debug]]))
 
 ;; handler to override bringer on a given date
 
@@ -16,11 +16,11 @@
 
 (defn override-bringer
   [who when]
-  (jdbc/with-db-transaction [tx db/db] 
+  (jdbc/with-db-transaction [tx db/db]
     ;; ensure that we primed until this date...
     (debug "performing sign-on for" who "on" when)
     (db-ops/prime-attendance tx when)
-    
+
     ;; is this a valid event at all?
     (if-not (:exists (db/any-attendance-on-date tx {:day when}))
       (:error-no-event answers)

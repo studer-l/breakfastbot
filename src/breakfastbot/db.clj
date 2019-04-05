@@ -1,7 +1,7 @@
 (ns breakfastbot.db
-  (:require [hugsql.core :as hugsql]
-            [mount.core :as mount :refer [defstate]]
-            [breakfastbot.config :refer [config]])
+  (:require [breakfastbot.config :refer [config]]
+            [hugsql.core :as hugsql]
+            [mount.core :as mount :refer [defstate]])
   (:import (com.mchange.v2.c3p0 ComboPooledDataSource)))
 
 (defn pool

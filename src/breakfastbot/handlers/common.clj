@@ -1,8 +1,8 @@
 (ns breakfastbot.handlers.common
-  (:require [java-time :as jt]
-            [breakfastbot.date-utils :refer [next-monday]]
+  (:require [breakfastbot.date-utils :refer [next-monday]]
+            [breakfastbot.markdown :as md]
             [clojure.tools.logging :refer [info debug]]
-            [breakfastbot.markdown :as md]))
+            [java-time :as jt]))
 
 (def answers {:ok-unhappy "Alright 🙄"
               :ok-happy "Great!"

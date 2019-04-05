@@ -1,8 +1,8 @@
 (ns breakfastbot.handlers.sign-on
-  (:require [clojure.tools.logging :refer [info debug]]
+  (:require [breakfastbot.db :as db]
             [breakfastbot.db-ops :as db-ops]
-            [breakfastbot.db :as db]
-            [breakfastbot.handlers.common :refer [answers person-date-matcher]]))
+            [breakfastbot.handlers.common :refer [answers person-date-matcher]]
+            [clojure.tools.logging :refer [info debug]]))
 
 ;; very similar to sign-off
 (defn parse-sign-on

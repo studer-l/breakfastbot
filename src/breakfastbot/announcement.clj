@@ -1,11 +1,11 @@
 (ns breakfastbot.announcement
-  (:require [java-time :as jt]
-            [breakfastbot.chatting :as chatting :refer [zulip-conn]]
-            [breakfastbot.db-ops :as db-ops]
-            [clojure.tools.logging :refer [debug]]
+  (:require [breakfastbot.chatting :as chatting :refer [zulip-conn]]
             [breakfastbot.db :as db]
+            [breakfastbot.db-ops :as db-ops]
+            [breakfastbot.markdown :as md]
             [clojure-zulip.core :as zulip]
-            [breakfastbot.markdown :as md]))
+            [clojure.tools.logging :refer [debug]]
+            [java-time :as jt]))
 
 (defn- attendee-bullet-list
   [prepare-result]

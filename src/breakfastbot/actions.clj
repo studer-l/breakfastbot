@@ -1,12 +1,12 @@
 (ns breakfastbot.actions
-  (:require [clojure.tools.logging :refer [info error fatal debug]]
-            [clojure.string :as s]
+  (:require [breakfastbot.handlers.add-member :refer [add-member-handler]]
             [breakfastbot.handlers.help :refer [handlers->help-handler]]
+            [breakfastbot.handlers.override :refer [override-bringer-handler]]
             [breakfastbot.handlers.sign-off :refer [sign-off-handler]]
             [breakfastbot.handlers.sign-on :refer [sign-on-handler]]
             [breakfastbot.handlers.who-brings :refer [who-handler]]
-            [breakfastbot.handlers.override :refer [override-bringer-handler]]
-            [breakfastbot.handlers.add-member :refer [add-member-handler]]))
+            [clojure.string :as s]
+            [clojure.tools.logging :refer [info error fatal debug]]))
 
 ;; Structure of Handler is a map with the keys :matcher :action  and :help
 ;;

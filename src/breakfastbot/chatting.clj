@@ -1,10 +1,10 @@
 (ns breakfastbot.chatting
-  (:require [clojure.core.async :as a]
+  (:require [breakfastbot.config :refer [config]]
+            [clojure-zulip.core :as zulip]
+            [clojure.core.async :as a]
             [clojure.tools.logging :refer [info debug]]
             [java-time :as jt]
-            [clojure-zulip.core :as zulip]
-            [mount.core :refer [defstate]]
-            [breakfastbot.config :refer [config]]))
+            [mount.core :refer [defstate]]))
 
 (defstate zulip-conn
   :start (zulip/connection (:zulip config)))

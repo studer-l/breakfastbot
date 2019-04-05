@@ -1,9 +1,9 @@
 (ns breakfastbot.db-ops
-  (:require [java-time :as jt]
-            [clojure.tools.logging :refer [info]]
-            [breakfastbot.date-utils :refer [next-monday mondays]]
+  (:require [breakfastbot.date-utils :refer [next-monday mondays]]
             [breakfastbot.db :as db]
-            [clojure.java.jdbc :as jdbc]))
+            [clojure.java.jdbc :as jdbc]
+            [clojure.tools.logging :refer [info]]
+            [java-time :as jt]))
 
 (defn prime-breakfast
   "Signs up all currently active members for breakfast on given date"
@@ -68,7 +68,6 @@
   (jdbc/with-db-transaction [tx db]
     (let [bringer (db/get-bringer-on tx {:day date})]
       (if (nil? bringer) (choose-bringer tx date) bringer))))
-
 
 (defn prepare-breakfast
   "Prepares next breakfast by selecting bringer and getting a list of attendees"

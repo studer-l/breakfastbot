@@ -1,7 +1,7 @@
 (ns breakfastbot.handlers.who-brings
-  (:require [java-time :as jt]
-            [breakfastbot.date-utils :refer [next-monday]]
-            [breakfastbot.db :as db]))
+  (:require [breakfastbot.date-utils :refer [next-monday]]
+            [breakfastbot.db :as db]
+            [java-time :as jt]))
 
 (defn who-brings [date]
   (if-let [bringer (db/get-bringer-on db/db {:day date})]

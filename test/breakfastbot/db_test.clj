@@ -1,7 +1,7 @@
 (ns breakfastbot.db-test
-  (:require [breakfastbot.db :as db]
+  (:require [breakfastbot.date-utils :refer [next-monday]]
+            [breakfastbot.db :as db]
             [breakfastbot.db-ops :as db-ops]
-            [breakfastbot.date-utils :refer [next-monday]]
             [clojure.test :as t]
             [java-time :as jt]
             [mount.core :as mount]))
@@ -70,7 +70,6 @@
    {:day not-so-popular-date :email (email-of 2)}
    {:day unpopular-date :email (email-of 2)}])
 
-
 (t/deftest insert-attendances
   (t/testing "can insert mock attendance data"
     (t/is (every? #(= 1 %)
@@ -126,7 +125,6 @@
     (t/testing "updates the bringer table"
       (t/is (= (nth mock-users 1)
                (db/get-bringer-on db/db {:day next-date}))))))
-
 
 (t/deftest prime-db
   (t/testing "can prime single date"

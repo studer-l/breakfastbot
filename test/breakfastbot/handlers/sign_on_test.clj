@@ -1,11 +1,11 @@
 (ns breakfastbot.handlers.sign-on-test
-  (:require [breakfastbot.handlers.sign-on :as sut]
-            [java-time :as jt]
-            [breakfastbot.handlers.common :refer [answers]]
-            [breakfastbot.db :as db]
-            [mount.core :as mount]
+  (:require [breakfastbot.db :as db]
             [breakfastbot.db-test :refer [prepare-mock-db unpopular-date mock-emails]]
-            [clojure.test :as t]))
+            [breakfastbot.handlers.common :refer [answers]]
+            [breakfastbot.handlers.sign-on :as sut]
+            [clojure.test :as t]
+            [java-time :as jt]
+            [mount.core :as mount]))
 
 (mount/start #'db/db)
 

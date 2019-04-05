@@ -1,11 +1,10 @@
 (ns breakfastbot.handlers.sign-off
-  (:require [clojure.tools.logging :refer [info debug]]
-            [breakfastbot.db-ops :as db-ops]
-            [breakfastbot.date-utils :refer [next-monday]]
+  (:require [breakfastbot.date-utils :refer [next-monday]]
             [breakfastbot.db :as db]
+            [breakfastbot.db-ops :as db-ops]
             [breakfastbot.handlers.common :refer [answers
-                                                  person-date-matcher]]))
-
+                                                  person-date-matcher]]
+            [clojure.tools.logging :refer [info debug]]))
 
 (defn parse-sign-off
   "syntax: cannot [me | other] [date]; note that only ordinary emails are
@@ -41,7 +40,7 @@
         (:ok-unhappy answers)))))
 
 (def sign-off-handler {:matcher parse-sign-off
-                       :action(fn [{who :who when :when}]
-                                (sign-off who when (next-monday)))
+                       :action (fn [{who :who when :when}]
+                                 (sign-off who when (next-monday)))
                        :help (str "\"@**breakfastbot** cannot [me|email] [date]\""
                                   " -- Sign (yourself) off from (next) event")})

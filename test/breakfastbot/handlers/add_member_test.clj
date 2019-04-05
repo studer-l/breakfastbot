@@ -10,7 +10,6 @@
   (t/testing "does not match against name"
     (t/is (nil? (sut/parse-add-member "ignored" "add first name")))))
 
-
 (t/deftest add-member-answer
   (t/testing "success answer is festive"
     (t/is (= "🎉🎈 Welcome @**Saul Goodman**!! 🎉🎈"

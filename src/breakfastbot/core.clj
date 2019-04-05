@@ -1,19 +1,18 @@
 (ns breakfastbot.core
-  (:require [breakfastbot.chatting :refer [transmit-event zulip-event-channels
+  (:require [breakfastbot.actions :refer [handlers dispatch-handlers]]
+            [breakfastbot.chatting :refer [transmit-event zulip-event-channels
                                            add-sync-handler]]
-            [breakfastbot.actions :refer [handlers dispatch-handlers]]
-            [breakfastbot.config :refer [config]]
-            [breakfastbot.db-ops :refer [prime-attendance]]
-            [breakfastbot.db :refer [db]]
             [breakfastbot.chores :refer [attendance-prime-task
                                          announce-breakfast-task]]
-            [mount.core :as mount :refer [defstate]]
+            [breakfastbot.config :refer [config]]
+            [breakfastbot.db :refer [db]]
+            [breakfastbot.db-ops :refer [prime-attendance]]
+            [clojure.core.async :as a]
+            [clojure.tools.logging :refer [info]]
             [migratus.core :as migratus]
             [mount-up.core :as mu]
-            [clojure.tools.logging :refer [info]]
-            [clojure.core.async :as a])
+            [mount.core :as mount :refer [defstate]])
   (:gen-class))
-
 
 (defstate chat-bot
   ;; attach handlers to event stream

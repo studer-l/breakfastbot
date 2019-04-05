@@ -1,12 +1,11 @@
 (ns breakfastbot.chores
-  (:require [clojure.core.async :as a]
-            [clojure.tools.logging :refer [info]]
-            [mount.core :refer [defstate]]
+  (:require [breakfastbot.announcement :refer [announce-breakfast]]
             [breakfastbot.db :refer [db]]
             [breakfastbot.db-ops :as db-ops]
-            [breakfastbot.announcement :refer [announce-breakfast]]
+            [clojure.core.async :as a]
+            [clojure.tools.logging :refer [info]]
             [java-time :as jt]
-            [mount.core :as mount]))
+            [mount.core :refer [defstate]]))
 
 (defn repeatedly-async-call
   [msecs func]

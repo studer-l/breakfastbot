@@ -1,7 +1,7 @@
 (ns breakfastbot.announcement-test
   (:require [breakfastbot.announcement :as sut]
-            [clojure.test :as t]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [clojure.test :as t]))
 
 (def mock-data
   {:bringer  {:fullname "Jimmy McGill"}

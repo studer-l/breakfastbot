@@ -1,11 +1,11 @@
 (ns breakfastbot.handlers.override-test
-  (:require [breakfastbot.handlers.override :as sut]
+  (:require [breakfastbot.db :as db]
+            [breakfastbot.db-test :refer [prepare-mock-db unpopular-date mock-emails]]
+            [breakfastbot.handlers.common :refer [answers]]
+            [breakfastbot.handlers.override :as sut]
             [clojure.test :as t]
             [java-time :as jt]
-            [breakfastbot.handlers.common :refer [answers]]
-            [breakfastbot.db :as db]
-            [mount.core :as mount]
-            [breakfastbot.db-test :refer [prepare-mock-db unpopular-date mock-emails]]))
+            [mount.core :as mount]))
 
 (mount/start #'db/db)
 
