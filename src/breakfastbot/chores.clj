@@ -5,9 +5,10 @@
             [breakfastbot.db :refer [db]]
             [breakfastbot.db-ops :as db-ops]
             [breakfastbot.announcement :refer [announce-breakfast]]
-            [java-time :as jt]))
+            [java-time :as jt]
+            [mount.core :as mount]))
 
-(defn- repeatedly-async-call
+(defn repeatedly-async-call
   [msecs func]
   (let [kill-channel (a/chan)]
     (a/go-loop []
