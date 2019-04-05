@@ -20,13 +20,13 @@
                           (recur)))))
     kill-channel))
 
-(def hour-in-millis (* 1000 60))
-(def day-in-millis (* hour-in-millis 24))
+(def minute-in-millis (* 1000 60))
+(def hour-in-millis (* minute-in-millis 60))
 
 (defstate attendance-prime-task
-  :start (repeatedly-async-call day-in-millis (fn [] db-ops/prime-attendance db))
+  :start (repeatedly-async-call hour-in-millis (fn [] db-ops/prime-attendance db))
   :stop (a/>!! :stop attendance-prime-task))
 
 (defstate announce-breakfast-task
-  :start (repeatedly-async-call hour-in-millis (fn [] (announce-breakfast (jt/local-date-time))))
+  :start (repeatedly-async-call minute-in-millis (fn [] (announce-breakfast (jt/local-date-time))))
   :stop (a/>!! :stop announce-breakfast-task))

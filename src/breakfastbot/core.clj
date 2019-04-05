@@ -5,6 +5,8 @@
             [breakfastbot.config :refer [config]]
             [breakfastbot.db-ops :refer [prime-attendance]]
             [breakfastbot.db :refer [db]]
+            [breakfastbot.chores :refer [attendance-prime-task
+                                         announce-breakfast-task]]
             [mount.core :as mount :refer [defstate]]
             [migratus.core :as migratus]
             [mount-up.core :as mu]
