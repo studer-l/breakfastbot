@@ -46,15 +46,17 @@
 (defn- format-error [msg]
   (str "💥 🤖 🔥 ERORR: " msg))
 
-(def trigger-word "@**Breakfast Bot**")
+;; matches a full command consisting of trigger sequence + action
+(def trigger-re #"^@\*\*Breakfast Bot\*\*\W+.+")
+
+;; only matches the initial sequence (missing `.+` at the end)
+(def clean-re #"^@\*\*Breakfast Bot\*\*\W+")
 
 (defn- strip-trigger-word [msg]
-  (let [minlength (inc (count trigger-word))]
-    (if (< minlength (count msg))
-      (subs msg(inc (count trigger-word))))))
+  (s/replace-first msg clean-re ""))
 
 (defn- starts-with-trigger? [msg]
-  (s/starts-with? msg trigger-word))
+  (re-matches trigger-re msg))
 
 (defn dispatch-handlers [handlers author content]
   (if (starts-with-trigger? content)
