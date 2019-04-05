@@ -13,15 +13,15 @@
 
 (t/deftest repeatedly-async-call
   (t/testing "is calling once every period"
-    (let [[kill outp] (report-channel 100)]
+    (let [[kill outp] (report-channel 50)]
       (dotimes [_ 10]
-        ;; test by asserting that answer arrives prior to timeout of 110 msec
-        (let [[_ c] (a/alts!! [outp (a/timeout 110)])]
+        ;; test by asserting that answer arrives prior to timeout
+        (let [[_ c] (a/alts!! [outp (a/timeout 100)])]
           (t/is (= c outp))))
       ;; stop it
       (t/testing "can be killed via kill-channel"
         (a/>!! kill :stop)
 
         ;; ensuire it stopped
-        (let [[_ c] (a/alts!! [outp (a/timeout 110)])]
+        (let [[_ c] (a/alts!! [outp (a/timeout 100)])]
           (t/is (not= c outp)))))))
