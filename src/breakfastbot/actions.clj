@@ -56,7 +56,7 @@
   (s/replace-first msg clean-re ""))
 
 (defn- starts-with-trigger? [msg]
-  (re-matches trigger-re msg))
+  (if msg (re-matches trigger-re msg)))
 
 (defn dispatch-handlers [handlers author content]
   (if (starts-with-trigger? content)
