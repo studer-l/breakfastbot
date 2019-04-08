@@ -25,12 +25,12 @@
        "\n\nResponsible for bringing Breakfast: "
        (md/mention (:fullname (:bringer attendee-data)))))
 
-(defn- time-to-announce?
-  "Announce on ideally on friday, at 15:00 or any time later on the weekend"
+(defn time-to-announce?
+  "Announce on ideally on friday, at 12:00 or any time later on the weekend"
   [datetime]
   (or (and (jt/friday? datetime)
-           (<= 15 (jt/as datetime :clock-hour-of-day)))
-      (any? ((juxt jt/saturday? jt/sunday?) datetime))))
+           (<= 12 (jt/as datetime :clock-hour-of-day)))
+      (some true? ((juxt jt/saturday? jt/sunday?) datetime))))
 
 (defn announce-breakfast
   "If not yet done so, announce breakfast on `date`"
