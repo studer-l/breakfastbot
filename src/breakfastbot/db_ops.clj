@@ -74,5 +74,7 @@
   [db date]
   ;; use the fact that nested transactions are absorbed by the outer transaction
   (jdbc/with-db-transaction [tx db]
-    {:bringer (get-or-choose-bringer tx date)
-     :attendees (into [] (db/get-all-attendees tx {:day date}))}))
+    (let [bringer (get-or-choose-bringer tx date)
+          attendees (into [] (db/get-all-attendees tx {:day date}))]
+      (if (not-any? nil? [bringer attendees])
+        {:bringer bringer :attendees attendees}))))
