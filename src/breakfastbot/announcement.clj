@@ -3,8 +3,9 @@
             [breakfastbot.db :as db]
             [breakfastbot.db-ops :as db-ops]
             [breakfastbot.markdown :as md]
+            [breakfastbot.date-utils :refer [next-monday]]
             [clojure-zulip.core :as zulip]
-            [clojure.tools.logging :refer [debug]]
+            [clojure.tools.logging :refer [debug info]]
             [java-time :as jt]))
 
 (defn- attendee-bullet-list
@@ -32,15 +33,19 @@
            (<= 12 (jt/as datetime :clock-hour-of-day)))
       (some true? ((juxt jt/saturday? jt/sunday?) datetime))))
 
+(defn- bringer-decided-on [date]
+  (:exists (db/have-bringer-for-day db/db {:day date})))
+
 (defn announce-breakfast
-  "If not yet done so, announce breakfast on `date`"
-  [datetime]
-  (when-not (and (time-to-announce? datetime)
-                 (:exists (db/have-bringer-for-day db/db {:day datetime})))
-    (debug "Going to announcing breakfast...")
-    (let [attendee-data (db-ops/prepare-breakfast db/db datetime)]
-      (debug "Scheduled breakfast:" attendee-data)
-      (zulip/send-stream-message zulip-conn "Monday Breakfast"
-                                 (chatting/date->subject datetime)
-                                 (announce-breakfast-message attendee-data))
-      (debug "Breakfast announced!"))))
+  "If not yet done so, announce next breakfast assuming the current time is `now-datetime`"
+  [now-datetime]
+  (let [next-event-date (next-monday now-datetime)]
+    (when (and (time-to-announce? now-datetime)
+               (not  (bringer-decided-on next-event-date)))
+      (debug "Going to announcing breakfast if there is one")
+      (when-let [attendee-data (db-ops/prepare-breakfast db/db next-event-date)]
+        (debug "Scheduled breakfast:" attendee-data)
+        (zulip/send-stream-message zulip-conn "Monday Breakfast"
+                                   (chatting/date->subject next-event-date)
+                                   (announce-breakfast-message attendee-data))
+        (debug "Breakfast announced!")))))

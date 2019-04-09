@@ -152,3 +152,9 @@
                      "natalie.newcomer@company.com" "nat")
                     ;; Then they are added to the existing events
                     (db/get-all-attendees db/db {:day (next-monday)}))))))
+
+(def random-date (jt/local-date 1980 11 12))
+
+(t/deftest prepare-breakfast
+  (t/testing "on a date with no attendees returns nil"
+    (t/is (nil? (db-ops/prepare-breakfast db/db random-date)))))

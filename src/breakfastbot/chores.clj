@@ -25,8 +25,8 @@
 
 (defstate attendance-prime-task
   :start (repeatedly-async-call hour-in-millis (fn [] db-ops/prime-attendance db))
-  :stop (a/>!! :stop attendance-prime-task))
+  :stop (a/>!! attendance-prime-task :stop))
 
 (defstate announce-breakfast-task
   :start (repeatedly-async-call minute-in-millis (fn [] (announce-breakfast (jt/local-date-time))))
-  :stop (a/>!! :stop announce-breakfast-task))
+  :stop (a/>!! announce-breakfast-task :stop))
