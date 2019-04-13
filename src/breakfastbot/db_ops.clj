@@ -2,7 +2,7 @@
   (:require [breakfastbot.date-utils :refer [next-monday mondays]]
             [breakfastbot.db :as db]
             [clojure.java.jdbc :as jdbc]
-            [clojure.tools.logging :refer [info]]
+            [clojure.tools.logging :refer [info debug]]
             [java-time :as jt]))
 
 (defn prime-breakfast
@@ -67,7 +67,11 @@
   [db date]
   (jdbc/with-db-transaction [tx db]
     (let [bringer (db/get-bringer-on tx {:day date})]
-      (if (nil? bringer) (choose-bringer tx date) bringer))))
+      (debug "Existing bringer id = " bringer)
+      (if (nil? bringer)
+        (do (debug "choosing new bringer")
+            (choose-bringer tx date))
+        bringer))))
 
 (defn prepare-breakfast
   "Prepares next breakfast by selecting bringer and getting a list of attendees"
@@ -76,5 +80,6 @@
   (jdbc/with-db-transaction [tx db]
     (let [bringer (get-or-choose-bringer tx date)
           attendees (into [] (db/get-all-attendees tx {:day date}))]
+      (debug "bringer = " bringer ", attendees = " attendees)
       (if (not-any? nil? [bringer attendees])
         {:bringer bringer :attendees attendees}))))

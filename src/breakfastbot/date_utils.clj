@@ -4,7 +4,7 @@
 (defn next-monday
   ([] (next-monday (jt/local-date)))
   ([after-date]
-   (jt/adjust after-date :next-or-same-day-of-week :monday)))
+   (jt/adjust (jt/local-date after-date) :next-or-same-day-of-week :monday)))
 
 (defn mondays
   "Stream of Mondays"

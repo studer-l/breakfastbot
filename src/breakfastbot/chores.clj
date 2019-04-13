@@ -1,5 +1,5 @@
 (ns breakfastbot.chores
-  (:require [breakfastbot.announcement :refer [announce-breakfast]]
+  (:require [breakfastbot.announcement :refer [announce-breakfast-in-zulip]]
             [breakfastbot.db :refer [db]]
             [breakfastbot.db-ops :as db-ops]
             [clojure.core.async :as a]
@@ -24,9 +24,13 @@
 (def hour-in-millis (* minute-in-millis 60))
 
 (defstate attendance-prime-task
-  :start (repeatedly-async-call hour-in-millis (fn [] db-ops/prime-attendance db))
+  :start (repeatedly-async-call hour-in-millis
+                                (fn [] db-ops/prime-attendance db))
   :stop (a/>!! attendance-prime-task :stop))
 
 (defstate announce-breakfast-task
-  :start (repeatedly-async-call minute-in-millis (fn [] (announce-breakfast (jt/local-date-time))))
+  :start (repeatedly-async-call minute-in-millis
+                                (fn []
+                                  (announce-breakfast-in-zulip
+                                   (jt/local-date-time))))
   :stop (a/>!! announce-breakfast-task :stop))

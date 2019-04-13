@@ -104,7 +104,7 @@
                                     {:id 3 :count 0}
                                     {:id 4 :count 1}})
 
-(t/deftest prepare-breakfast
+(t/deftest prepare-breakfast-primitives
   (t/testing "can insert bringings"
     (t/is (= [1 1 1]
              (do (reset-db! db/db)
@@ -156,7 +156,11 @@
 (def random-date (jt/local-date 1980 11 12))
 
 (t/deftest prepare-breakfast
-  (reset-db! db/db)
   (prepare-mock-db)
   (t/testing "on a date with no attendees returns nil"
-    (t/is (nil? (db-ops/prepare-breakfast db/db random-date)))))
+    (t/is (nil? (db-ops/prepare-breakfast db/db random-date))))
+
+  (t/testing "on a date with attendees, prepares it"
+    (let [attendance-data (db-ops/prepare-breakfast db/db next-date)]
+      (t/is (some? (:bringer attendance-data)))
+      (t/is (some? (:attendees attendance-data))))))
