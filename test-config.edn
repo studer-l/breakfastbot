@@ -5,4 +5,7 @@
       :subprotocol "postgresql"
       :subname "//127.0.0.1:5432/postgres"
       :user "postgres"
-      :password "VerySecret"}}
+      :password "VerySecret"}
+ :logging {:breakfastbot :info
+           :root :error}
+ :bot {:channel "Breakfast Club"}}

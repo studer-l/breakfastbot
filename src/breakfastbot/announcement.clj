@@ -4,6 +4,7 @@
             [breakfastbot.db-ops :as db-ops]
             [breakfastbot.markdown :as md]
             [breakfastbot.date-utils :refer [next-monday]]
+            [breakfastbot.config :refer [config]]
             [clojure-zulip.core :as zulip]
             [clojure.tools.logging :refer [debug info]]
             [java-time :as jt]))
@@ -51,7 +52,7 @@
   "If not yet done so, announce next breakfast assuming the current time is `now-datetime`"
   [now-datetime]
   (when-let [[next-event-date attendee-data] (schedule-breakfast now-datetime)]
-    (zulip/send-stream-message zulip-conn "Monday Breakfast"
+    (zulip/send-stream-message zulip-conn (-> config :bot :channel)
                                (chatting/date->subject next-event-date)
                                (announce-breakfast-message attendee-data))
     (debug "Breakfast announced!")))
