@@ -10,7 +10,7 @@ Note that deployment does not require docker, but it simplifies the process.
 The actual Breakfastbot application. Meant for deployment, relies on presence
 of a `/breakfastbot/prod-config.edn`, you can either mount it or add in a
 dockerfile. Available on
-[dockerhub](https://cloud.docker.com/u/studerl/repository/docker/studerl/breakfastbot).
+[dockerhub](https://hub.docker.com/r/studerl/breakfastbot).
 
 ## `deploy/db`
 
