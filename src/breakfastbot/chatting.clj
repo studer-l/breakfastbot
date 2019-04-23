@@ -2,7 +2,7 @@
   (:require [breakfastbot.config :refer [config]]
             [clojure-zulip.core :as zulip]
             [clojure.core.async :as a]
-            [clojure.tools.logging :refer [info debug]]
+            [clojure.tools.logging :refer [info debug trace]]
             [java-time :as jt]
             [mount.core :refer [defstate]]))
 
@@ -25,7 +25,8 @@
          sender :sender_email
          :keys [:subject :content]} message]
     ;; ignore messages sent by bot itself
-    (if (not= (-> config :zulip :username) sender)
+    (when (not= (-> config :zulip :username) sender)
+      (trace "New message: \"" content "\" by" sender)
       (when-let [reply (receiver sender content)]
         ;; Reply to private message in private
         (if (= message-type "private")

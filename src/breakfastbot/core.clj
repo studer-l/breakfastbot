@@ -43,4 +43,5 @@
       (info "Database up to date")))
   (mount/start)
   ;; ensure we are primed for next 30 days now rather than waiting for background task
-  (prime-attendance db))
+  (prime-attendance db)
+  (info "Breakfast-Bot running!"))

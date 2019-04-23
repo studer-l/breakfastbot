@@ -14,7 +14,7 @@
   (debug "looking user matching email" email)
   (let [reply (zulip/sync* (zulip/members zulip-conn))]
     (when (= (:result reply) "success")
-      (debug "Received user list from server, scanning for matching email..")
+      (debug "Received user list from server, scanning for matching email...")
       (->> reply :members
            (filter #(= email (:email %)))
            first
@@ -25,10 +25,12 @@
   (let [fullname (get-zulip-user-by-email email)]
     (if fullname
       (do (db-ops/add-new-team-member email fullname)
+          (debug "Added new member" fullname email ", announcing...")
           ((:welcome answers) fullname))
       (throw (ex-info (str "Could not find any user with email " email)
                       {:public true})))))
 
-(def add-member-handler {:matcher parse-add-member
-                         :action add-member-action
-                         :help "\"@**breakfastbot** add email\" -- Adds new team member"})
+(def add-member-handler
+  {:matcher parse-add-member
+   :action add-member-action
+   :help "\"@**breakfastbot** add email\" -- Adds new team member"})
