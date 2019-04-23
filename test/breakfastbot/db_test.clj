@@ -9,16 +9,22 @@
 (mount/start #'db/db)
 
 ;; setup test db
-(defn reset-db! [db]
-  (db/drop-bringer-table db)
-  (db/drop-attendances-table db)
-  (db/drop-members-table db)
-  (db/drop-app-state-table db)
+(defn create-db! [db]
   (db/create-members-table db)
   (db/create-attendances-table db)
   (db/create-app-state-table db)
   (db/create-bringer-table db)
   (db/insert-initial-app-state db))
+
+(defn drop-db! [db]
+  (db/drop-bringer-table db)
+  (db/drop-attendances-table db)
+  (db/drop-members-table db)
+  (db/drop-app-state-table db))
+
+(defn reset-db! [db]
+  (drop-db! db)
+  (create-db! db))
 
 ;; add some users
 (def mock-emails [{:email "stan.sandiford@company.com"}

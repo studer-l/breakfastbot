@@ -12,10 +12,10 @@
                  [com.layerware/hugsql "0.4.9"]
                  [org.clojure/tools.logging "0.4.1"]
                  [clojure.java-time "0.3.2"]
-                 [com.mchange/c3p0 "0.9.5.3"]
+                 [com.mchange/c3p0 "0.9.5.4"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [migratus "1.2.3"]
-                 [org.clojars.studerl/clojure-zulip "0.2.0"]]
+                 [org.clojars.studerl/clojure-zulip "0.2.1"]]
   :plugins [[lein-cloverage "1.1.1"]]
   :cloverage {:html? false}
   :resource-paths ["resources"]

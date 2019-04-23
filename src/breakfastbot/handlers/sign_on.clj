@@ -23,6 +23,7 @@
     (:error-no-event answers)
     (do
       (db/insert-attendance-by-email db/db {:email who :day when})
+      (debug "sign-on action succeeded")
       (:ok-happy answers))))
 
 (def sign-on-handler {:matcher parse-sign-on

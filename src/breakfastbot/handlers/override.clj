@@ -17,8 +17,8 @@
 (defn override-bringer
   [who when]
   (jdbc/with-db-transaction [tx db/db]
+    (debug "overriding bringer to " who "on" when)
     ;; ensure that we primed until this date...
-    (debug "performing sign-on for" who "on" when)
     (db-ops/prime-attendance tx when)
 
     ;; is this a valid event at all?
@@ -28,6 +28,7 @@
         (if (db/have-bringer-for-day tx {:day when})
           (db/change-bringer-on tx {:day when :email who})
           (db/set-bringer-by-email tx {:day when :email who}))
+        (debug "override successful")
         (:ack answers)))))
 
 (def override-bringer-handler
