@@ -15,7 +15,7 @@
                  [com.mchange/c3p0 "0.9.5.4"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [migratus "1.2.3"]
-                 [org.clojars.studerl/clojure-zulip "0.2.1"]]
+                 [org.clojars.studerl/clojure-zulip "0.3.0"]]
   :plugins [[lein-cloverage "1.1.1"]]
   :cloverage {:html? false}
   :resource-paths ["resources"]
