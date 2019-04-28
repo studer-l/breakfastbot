@@ -10,9 +10,7 @@
   :start (zulip/connection (:zulip config)))
 
 (defstate zulip-event-channels
-  :start (let [register-response (zulip/sync* (zulip/register zulip-conn))]
-           (info "Registered to zulip server event queue")
-           (zulip/subscribe-events zulip-conn register-response))
+  :start (zulip/event-queue zulip-conn)
   :stop (a/>!! (second zulip-event-channels) :stop))
 
 (defn transmit-event
