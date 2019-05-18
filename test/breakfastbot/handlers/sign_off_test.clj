@@ -71,5 +71,5 @@
   (t/testing "when the last person signs off, breakfast is canceled"
     (t/is (= (:ok-unhappy answers)
              (sut/sign-off "stan.sandiford@company.com" date date)))
-    (t/is (= (:cancel answers)
+    (t/is (= ((:cancel answers) date)
              (sut/sign-off "miles.mcinnis@company.com" date date)))))
