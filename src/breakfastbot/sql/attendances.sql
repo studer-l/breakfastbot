@@ -46,6 +46,11 @@ delete from attendances
               where email = :email)
        and day = :day;
 
+-- :name remove-attendances-from :! :n
+delete from attendances
+ where id = (select id from members where email = :email)
+       and day > :date
+
 -- :name any-attendance-on-date :? :1
 select exists (select 1 from attendances where day = :day);
 
