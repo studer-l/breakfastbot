@@ -79,7 +79,7 @@
   ;; use the fact that nested transactions are absorbed by the outer transaction
   (jdbc/with-db-transaction [tx db]
     (let [bringer (get-or-choose-bringer tx date)
-          attendees (into [] (db/get-all-attendees tx {:day date}))]
+          attendees (vec (db/get-all-attendees tx {:day date}))]
       (debug "bringer = " bringer ", attendees = " attendees)
       (if (not-any? nil? [bringer attendees])
         {:bringer bringer :attendees attendees}))))
@@ -92,22 +92,29 @@
   - `:ok-new-responsible` along with email of newly responsible person.
   - `:no-signup`
   - `:no-event`"
-  [db-con who when next-date]
+  [db-con who date next-date]
   (let [was-supposed-to-bring
-        (and (= when next-date)
-             (= who (:email (db/get-bringer-on db/db {:day next-date}))))]
+        (and (= date next-date)
+             (= who (:email (db/get-bringer-on db-con {:day next-date}))))]
     ;; if was supposed to bring, remove bringer state
-    (if was-supposed-to-bring (db/reset-bringer-for-day db/db {:day when}))
-    (if (zero? (db/remove-attendance-by-email-at db/db {:day when :email who}))
+    (when was-supposed-to-bring
+      (debug "User" who "was supposed to bring breakfast on date" (jt/format date))
+      (db/reset-bringer-for-day db-con {:day date}))
+    (if (zero? (db/remove-attendance-by-email-at db-con {:day date :email who}))
       ;; ... either user typo and there's no event, or there is no breakfast on
       ;; this date, but which is it?!
-      (if (:exists (db/any-attendance-on-date db/db {:day when}))
+      (if (:exists (db/any-attendance-on-date db-con {:day date}))
         :no-signup
         :no-event)
       ;; otherwise we did remove the user from the event
       (if was-supposed-to-bring
         ;; figure out who is now responsible
-        (if-let [{email :email} (choose-bringer db/db when)]
+        (if-let [{email :email} (choose-bringer db-con date)]
           [:ok-new-responsible email]
           :ok-cancel)
         :ok))))
+
+(defn attends-event? [email date]
+  (some #(= email (:email %))
+        (db/get-all-attendees db/db {:day date})))
+

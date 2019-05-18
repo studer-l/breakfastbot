@@ -22,3 +22,9 @@ select id, email, fullname from members where active = true;
 
 -- :name get-member-by-id :? :1
 select fullname, email from members where id = :id;
+
+-- :name change-member-active :! :1
+update members set active = :active where email = :email;
+
+-- :name get-member-by-email :? :1
+select email, fullname, active from members where email = :email;

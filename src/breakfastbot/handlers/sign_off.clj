@@ -4,7 +4,8 @@
             [breakfastbot.db-ops :as db-ops]
             [breakfastbot.handlers.common :refer [answers
                                                   person-date-matcher]]
-            [clojure.tools.logging :refer [info debug]]))
+            [clojure.tools.logging :refer [info debug]]
+            [java-time :as jt]))
 
 (defn parse-sign-off
   "syntax: cannot [me | other] [date]; note that only ordinary emails are
@@ -17,8 +18,8 @@
 (defn sign-off
   [who when next-date]
   ;; ensure that we primed until this date...
-  (debug "performing sign-off for" who "on" when
-         "considering next breakfast is on" next-date)
+  (debug "performing sign-off for" who "on" (jt/format when)
+         "considering next breakfast is on" (jt/format next-date))
   (db-ops/prime-attendance db/db when)
   (let [result (db-ops/safe-remove db/db who when next-date)]
     (cond

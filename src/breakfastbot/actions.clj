@@ -5,6 +5,7 @@
             [breakfastbot.handlers.sign-off :refer [sign-off-handler]]
             [breakfastbot.handlers.sign-on :refer [sign-on-handler]]
             [breakfastbot.handlers.who-brings :refer [who-handler]]
+            [breakfastbot.handlers.deactivate :refer [deactivate-handler]]
             [clojure.string :as s]
             [clojure.tools.logging :refer [info error fatal debug]]))
 
@@ -31,7 +32,7 @@
 
 ;; all handlers except help-handler
 (def basic-handlers [who-handler sign-off-handler add-member-handler
-                     sign-on-handler override-bringer-handler])
+                     sign-on-handler override-bringer-handler deactivate-handler])
 (def handlers (conj basic-handlers (handlers->help-handler basic-handlers)))
 
 (def help-handler
