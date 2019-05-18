@@ -9,11 +9,12 @@
               :ack "🤖 ACKNOWLEDGED 🤖"
               :error-already-signed-off "ERROR: You already signed off! 😤"
               :error-no-event "ERROR: No event scheduled for this date 👎"
+              :error-no-member "ERROR: Noone by this email is registered! 💣"
               :change-responsible
               (fn [fullname]
                 (str "OK 🙄 New responsible for bringing breakfast is "
                      (md/mention fullname)))
-              :cancel "BREAKFAST CANCELED!"
+              :cancel (fn [when] (str "BREAKFAST ON " (jt/format when) " CANCELED!"))
               :welcome (fn [email] (str "🎉🎈 Welcome " (md/mention email) "!! 🎉🎈"))})
 
 (defn try-parse-date

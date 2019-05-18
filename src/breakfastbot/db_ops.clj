@@ -83,3 +83,31 @@
       (debug "bringer = " bringer ", attendees = " attendees)
       (if (not-any? nil? [bringer attendees])
         {:bringer bringer :attendees attendees}))))
+
+(defn safe-remove
+  "Remove `who` from event `when` considering next event on date `next-date`
+  Returns one of:
+  - `:ok`
+  - `:ok-cancel` if no more attendees
+  - `:ok-new-responsible` along with email of newly responsible person.
+  - `:no-signup`
+  - `:no-event`"
+  [db-con who when next-date]
+  (let [was-supposed-to-bring
+        (and (= when next-date)
+             (= who (:email (db/get-bringer-on db/db {:day next-date}))))]
+    ;; if was supposed to bring, remove bringer state
+    (if was-supposed-to-bring (db/reset-bringer-for-day db/db {:day when}))
+    (if (zero? (db/remove-attendance-by-email-at db/db {:day when :email who}))
+      ;; ... either user typo and there's no event, or there is no breakfast on
+      ;; this date, but which is it?!
+      (if (:exists (db/any-attendance-on-date db/db {:day when}))
+        :no-signup
+        :no-event)
+      ;; otherwise we did remove the user from the event
+      (if was-supposed-to-bring
+        ;; figure out who is now responsible
+        (if-let [{email :email} (choose-bringer db/db when)]
+          [:ok-new-responsible email]
+          :ok-cancel)
+        :ok))))
