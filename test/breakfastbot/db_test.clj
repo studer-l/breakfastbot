@@ -14,12 +14,14 @@
   (db/create-attendances-table db)
   (db/create-app-state-table db)
   (db/create-bringer-table db)
+  (db/create-announce-msg-table db)
   (db/insert-initial-app-state db))
 
 (defn drop-db! [db]
   (db/drop-bringer-table db)
   (db/drop-attendances-table db)
   (db/drop-members-table db)
+  (db/drop-announce-msg-table db)
   (db/drop-app-state-table db))
 
 (defn reset-db! [db]

@@ -29,3 +29,4 @@
 (hugsql/def-db-fns "breakfastbot/sql/attendances.sql")
 (hugsql/def-db-fns "breakfastbot/sql/bringer.sql")
 (hugsql/def-db-fns "breakfastbot/sql/app_state.sql")
+(hugsql/def-db-fns "breakfastbot/sql/announce_msg.sql")

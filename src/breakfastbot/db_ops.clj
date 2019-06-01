@@ -47,17 +47,21 @@
                                                 :id new-id})))
     (info "Added new team member" fullname)))
 
+(defn- choose-bringer-by-attendance-counts
+  [tx date]
+  (some->> {:day date}
+           (db/get-attendance-counts-since-bringing tx)
+           seq ;; transforms empty list to nil, discarding it
+           (apply max-key :count)
+           :id))
+
 (defn choose-bringer
   "Determines who should bring breakfast on a given date.
   First counts attendances and then updates bringer table.
   Returns bringer email and fullname if one is chosen, nil otherwise."
   [db date]
   (jdbc/with-db-transaction [tx db]
-    (if-let [id (some->> {:day date}
-                         (db/get-attendance-counts-since-bringing tx)
-                         seq ;; transforms empty list to nil, discarding it
-                         (apply max-key :count)
-                         :id)]
+    (if-let [id (choose-bringer-by-attendance-counts tx date)]
       (do
         (db/set-bringer-on tx {:day date :id id})
         (info "bringer set for" (jt/format "d.M.yyyy" date) "to" id)
@@ -117,4 +121,3 @@
 (defn attends-event? [email date]
   (some #(= email (:email %))
         (db/get-all-attendees db/db {:day date})))
-

@@ -7,7 +7,8 @@
             [breakfastbot.config :refer [config]]
             [clojure-zulip.core :as zulip]
             [clojure.tools.logging :refer [debug info]]
-            [java-time :as jt]))
+            [java-time :as jt]
+            [clojure.core.async :as a]))
 
 (defn- attendee-bullet-list
   [prepare-result]
@@ -20,12 +21,13 @@
 (defn announce-breakfast-message
   "Create breakfast announcement from attendee + bringer list"
   [attendee-data]
-  (str "🤖📣 BREAKFAST SCHEDULED 🤖📣\n\n"
-       "Attendees:\n"
-       (attendee-bullet-list attendee-data)
-       "\nTotal attendees: " (-> attendee-data :attendees count Integer.)
-       "\n\nResponsible for bringing Breakfast: "
-       (md/mention (:fullname (:bringer attendee-data)))))
+  (if (nil? attendee-data) "🤖📣 BREAKFAST CANCELED 🤖📣\n\n"
+      (str "🤖📣 BREAKFAST SCHEDULED 🤖📣\n\n"
+           "Attendees:\n"
+           (attendee-bullet-list attendee-data)
+           "\nTotal attendees: " (-> attendee-data :attendees count Integer.)
+           "\n\nResponsible for bringing Breakfast: "
+           (md/mention (:fullname (:bringer attendee-data))))))
 
 (defn time-to-announce?
   "Announce on ideally on friday, at 12:00 or any time later on the weekend"
@@ -49,10 +51,20 @@
         [next-event-date attendee-data]))))
 
 (defn announce-breakfast-in-zulip
-  "If not yet done so, announce next breakfast assuming the current time is `now-datetime`"
+  "If not yet done so, announce next breakfast assuming the current time is
+  `now-datetime`"
   [now-datetime]
   (when-let [[next-event-date attendee-data] (schedule-breakfast now-datetime)]
-    (zulip/send-stream-message zulip-conn (-> config :bot :channel)
-                               (chatting/date->subject next-event-date)
-                               (announce-breakfast-message attendee-data))
+    (let [ch (zulip/send-stream-message zulip-conn
+                                        (-> config :bot :channel)
+                                        (chatting/date->subject next-event-date)
+                                        (announce-breakfast-message attendee-data))]
+      (db/insert-announce-msg-id db/db {:day next-event-date
+                                        :id (-> ch a/<!! :id)}))
     (debug "Breakfast announced!")))
+
+(defn update-current-announcement [db]
+  (if-let [msg-id (-> db (db/get-announce-msg-id {:day (next-monday)}) :id)]
+    (let [attendee-data (db-ops/prepare-breakfast db (next-monday))]
+      (zulip/update-message zulip-conn msg-id
+                            (announce-breakfast-message attendee-data)))))
