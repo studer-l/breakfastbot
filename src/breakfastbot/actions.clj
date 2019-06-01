@@ -9,7 +9,8 @@
             [breakfastbot.announcement :refer [update-current-announcement]]
             [clojure.string :as s]
             [clojure.tools.logging :refer [info error fatal debug]]
-            [breakfastbot.db :as db]))
+            [breakfastbot.db :as db])
+  (:import (org.postgresql.util PSQLException)))
 
 ;; Structure of Handler is a map with the keys :matcher :action  and :help
 ;;
@@ -44,9 +45,7 @@
   [handler author content]
   (if-let [args ((:matcher handler) author content)]
     (do (info "Matched with hander" (type (:matcher handler)))
-        (let [result ((:action handler) args)]
-          (update-current-announcement db/db)
-          result))))
+        ((:action handler) args))))
 
 (defn- format-error [msg]
   (str "💥 🤖 🔥 ERORR: " msg))
@@ -68,7 +67,15 @@
     (let [cmd (strip-trigger-word content)]
       (try
         (debug "trying to match cmd:" cmd)
-        (some (fn [handler] (try-handler handler author cmd)) handlers)
+        (let [result (some (fn [handler] (try-handler handler author cmd))
+                           handlers)]
+          (try (update-current-announcement db/db)
+               (catch org.postgresql.util.PSQLException ex
+                 (error "Caught postgres exception:\n"
+                        (-> ex Throwable->map :cause)
+                        "\nwhen trying to update announcement message, this is"
+                        "a benign error at test time")))
+          result)
         (catch clojure.lang.ExceptionInfo ex
           (error "Handler called by" author "with \"" content
                  "\" caught exception" ex "")
