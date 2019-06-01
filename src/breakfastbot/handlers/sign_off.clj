@@ -27,6 +27,7 @@
       (= result :ok-cancel) ((:cancel answers) next-date)
       (= result :no-signup) (:error-already-signed-off answers)
       (= result :no-event) (:error-no-event answers)
+      (= result :no-member) (:error-no-member answers)
       (= (first result) :ok-new-responsible) ((:change-responsible answers)
                                               (second result)))))
 

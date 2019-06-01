@@ -95,28 +95,32 @@
   - `:ok-cancel` if no more attendees
   - `:ok-new-responsible` along with email of newly responsible person.
   - `:no-signup`
-  - `:no-event`"
+  - `:no-event`
+  - `:no-member`"
   [db-con who date next-date]
-  (let [was-supposed-to-bring
-        (and (= date next-date)
-             (= who (:email (db/get-bringer-on db-con {:day next-date}))))]
-    ;; if was supposed to bring, remove bringer state
-    (when was-supposed-to-bring
-      (debug "User" who "was supposed to bring breakfast on date" (jt/format date))
-      (db/reset-bringer-for-day db-con {:day date}))
-    (if (zero? (db/remove-attendance-by-email-at db-con {:day date :email who}))
-      ;; ... either user typo and there's no event, or there is no breakfast on
-      ;; this date, but which is it?!
-      (if (:exists (db/any-attendance-on-date db-con {:day date}))
-        :no-signup
-        :no-event)
-      ;; otherwise we did remove the user from the event
-      (if was-supposed-to-bring
-        ;; figure out who is now responsible
-        (if-let [{email :email} (choose-bringer db-con date)]
-          [:ok-new-responsible email]
-          :ok-cancel)
-        :ok))))
+  (if (nil? (db/get-member-by-email db-con {:email who})) :no-member
+      (let [was-supposed-to-bring
+            (and (= date next-date)
+                 (= who (:email (db/get-bringer-on db-con {:day next-date}))))]
+        ;; if was supposed to bring, remove bringer state
+        (when was-supposed-to-bring
+          (debug "User" who "was supposed to bring breakfast on date"
+                 (jt/format date))
+          (db/reset-bringer-for-day db-con {:day date}))
+        (if (zero? (db/remove-attendance-by-email-at db-con {:day date
+                                                             :email who}))
+          ;; ... either user typo and there's no event, or there is no breakfast on
+          ;; this date, but which is it?!
+          (if (:exists (db/any-attendance-on-date db-con {:day date}))
+            :no-signup
+            :no-event)
+          ;; otherwise we did remove the user from the event
+          (if was-supposed-to-bring
+            ;; figure out who is now responsible
+            (if-let [{email :email} (choose-bringer db-con date)]
+              [:ok-new-responsible email]
+              :ok-cancel)
+            :ok)))))
 
 (defn attends-event? [email date]
   (some #(= email (:email %))
