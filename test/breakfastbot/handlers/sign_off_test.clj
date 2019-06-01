@@ -72,4 +72,7 @@
     (t/is (= (:ok-unhappy answers)
              (sut/sign-off "stan.sandiford@company.com" date date)))
     (t/is (= ((:cancel answers) date)
-             (sut/sign-off "miles.mcinnis@company.com" date date)))))
+             (sut/sign-off "miles.mcinnis@company.com" date date))))
+  (t/testing "reports error when no member is found"
+    (t/is (= (:error-no-member answers)
+             (sut/sign-off "imaginary.person@company.com" date date)))))
