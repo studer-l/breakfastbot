@@ -6,8 +6,10 @@
             [breakfastbot.handlers.sign-on :refer [sign-on-handler]]
             [breakfastbot.handlers.who-brings :refer [who-handler]]
             [breakfastbot.handlers.deactivate :refer [deactivate-handler]]
+            [breakfastbot.announcement :refer [update-current-announcement]]
             [clojure.string :as s]
-            [clojure.tools.logging :refer [info error fatal debug]]))
+            [clojure.tools.logging :refer [info error fatal debug]]
+            [breakfastbot.db :as db]))
 
 ;; Structure of Handler is a map with the keys :matcher :action  and :help
 ;;
@@ -42,7 +44,9 @@
   [handler author content]
   (if-let [args ((:matcher handler) author content)]
     (do (info "Matched with hander" (type (:matcher handler)))
-        ((:action handler) args))))
+        (let [result ((:action handler) args)]
+          (update-current-announcement db/db)
+          result))))
 
 (defn- format-error [msg]
   (str "💥 🤖 🔥 ERORR: " msg))
@@ -73,4 +77,3 @@
           (fatal "Unexpected error processing message by " author "content: \""
                  content "\" exception:" ex)
           (throw ex))))))
-
