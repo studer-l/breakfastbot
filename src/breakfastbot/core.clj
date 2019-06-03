@@ -44,4 +44,6 @@
   (mount/start)
   ;; ensure we are primed for next 30 days now rather than waiting for background task
   (prime-attendance db)
-  (info "Breakfast-Bot running!"))
+  (info "Breakfast-Bot running!")
+  ;; block until forever
+  (a/<!! chat-bot))
