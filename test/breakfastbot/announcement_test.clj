@@ -4,7 +4,11 @@
             [clojure.test :as t]
             [java-time :as jt]
             [breakfastbot.db-test :refer [prepare-mock-db]]
-            [breakfastbot.db-ops :as db-ops]))
+            [breakfastbot.db-ops :as db-ops]
+            [breakfastbot.db :as db]
+            [mount.core :as mount]))
+
+(mount/start #'db/db)
 
 (def mock-data
   {:bringer  {:fullname "Jimmy McGill"}
@@ -55,3 +59,8 @@
       (t/is (= event-date monday))
       (t/is (some? (:bringer attendance-data)))
       (t/is (some? (:attendees attendance-data))))))
+
+
+(t/deftest update-announcement
+  (t/testing "Trying to update non-existing announcement has no effect"
+    (t/is (nil? (sut/update-current-announcement db/db (jt/local-date 2050 1 1))))))
