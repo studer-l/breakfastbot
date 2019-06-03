@@ -63,8 +63,10 @@
                                         :id (-> ch a/<!! :id)}))
     (debug "Breakfast announced!")))
 
-(defn update-current-announcement [db]
-  (if-let [msg-id (-> db (db/get-announce-msg-id {:day (next-monday)}) :id)]
-    (let [attendee-data (db-ops/prepare-breakfast db (next-monday))]
-      (zulip/update-message zulip-conn msg-id
-                            (announce-breakfast-message attendee-data)))))
+(defn update-current-announcement
+  ([db] (update-current-announcement db (next-monday)))
+  ([db date]
+   (if-let [msg-id (-> db (db/get-announce-msg-id {:day date}) :id)]
+     (let [attendee-data (db-ops/prepare-breakfast db date)]
+       (zulip/update-message zulip-conn msg-id
+                             (announce-breakfast-message attendee-data))))))
