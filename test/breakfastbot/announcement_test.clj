@@ -60,7 +60,6 @@
       (t/is (some? (:bringer attendance-data)))
       (t/is (some? (:attendees attendance-data))))))
 
-
 (t/deftest update-announcement
   (prepare-mock-db)
   (t/testing "Trying to update non-existing announcement has no effect"

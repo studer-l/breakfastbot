@@ -10,7 +10,6 @@
             [clojure.test :as t]
             [breakfastbot.db-ops :as db-ops]))
 
-
 (mount/start #'db/db)
 
 (t/deftest deactivate-parser
