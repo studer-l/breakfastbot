@@ -44,6 +44,7 @@
   [now-datetime]
   (let [next-event-date (next-monday now-datetime)]
     (when (and (time-to-announce? now-datetime)
+               (db/any-attendance-on-date db/db {:day next-event-date})
                (not (bringer-decided-on next-event-date)))
       (debug "Appropriate time to announce breakfast and have not done it yet")
       (when-let [attendee-data (db-ops/prepare-breakfast db/db next-event-date)]
