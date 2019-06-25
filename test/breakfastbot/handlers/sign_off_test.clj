@@ -51,28 +51,34 @@
 ;; testing the handler is superbly complicated
 (t/deftest test-sign-off-action
   (t/testing "can sign-off prior to commitment"
-    (t/is (= (:ok-unhappy answers)
+    (t/is (= {:direct-reply (:ok-unhappy answers)
+              :update       true}
              (do (prepare-mock-db)
                  ;; at this stage no bringer is selected for this date yet
                  (sut/sign-off "marissa.mucci@company.com" date date)))))
   (t/testing "cannot sign-off twice"
-    (t/is (= (:error-signed-off answers)
+    (t/is (= {:direct-reply (:error-signed-off answers)}
              (sut/sign-off "marissa.mucci@company.com" date date))))
   (t/testing "cannot sign-off from non-existant event"
-    (t/is (= (:error-no-event answers)
+    (t/is (= {:direct-reply (:error-no-event answers)}
              (sut/sign-off "marissa.mucci@company.com"
                            (jt/plus date (jt/days 1))
                            date))))
   (t/testing "conflicts are resolved"
     (db/set-bringer-by-email db/db
                              {:day date :email "catherina.carollo@company.com"})
-    (t/is (= ((:change-bringer answers) "miles.mcinnis@company.com")
+    (t/is (= {:direct-reply ((:change-bringer answers) "miles.mcinnis@company.com")
+              :update       true
+              :notification {:who "miles.mcinnis@company.com"
+                             :msg (:new-bringer answers)}}
              (sut/sign-off "catherina.carollo@company.com" date date))))
   (t/testing "when the last person signs off, breakfast is canceled"
-    (t/is (= (:ok-unhappy answers)
+    (t/is (= {:direct-reply (:ok-unhappy answers)
+              :update       true}
              (sut/sign-off "stan.sandiford@company.com" date date)))
-    (t/is (= ((:cancel answers) date)
+    (t/is (= {:direct-reply ((:cancel answers) date)
+              :update       true}
              (sut/sign-off "miles.mcinnis@company.com" date date))))
   (t/testing "reports error when no member is found"
-    (t/is (= (:error-no-member answers)
+    (t/is (= {:direct-reply (:error-no-member answers)}
              (sut/sign-off "imaginary.person@company.com" date date)))))

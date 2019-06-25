@@ -19,8 +19,9 @@
 (t/deftest sign-on-action
   (t/testing "can sign on on known date"
     (prepare-mock-db)
-    (t/is (= (:ok-happy answers)
+    (t/is (= {:direct-reply (:ok-happy answers)
+              :update       true}
              (sut/sign-on (-> mock-emails first :email) unpopular-date))))
   (t/testing "refuses sing-on for dates where there is no breakfast"
-    (t/is (= (:error-no-event answers)
+    (t/is (= {:direct-reply (:error-no-event answers)}
              (sut/sign-on "test@company.com" (jt/local-date))))))

@@ -19,9 +19,9 @@
 (t/deftest override-bringer-action
   (t/testing "can override on known date"
     (prepare-mock-db)
-    (t/is (= (:ack answers)
+    (t/is (= {:direct-reply (:ack answers)}
              (sut/override-bringer (-> mock-emails (nth 2) :email)
                                    unpopular-date))))
   (t/testing "refuses sing-on for dates where there is no breakfast"
-    (t/is (= (:error-no-event answers)
+    (t/is (= {:direct-reply (:error-no-event answers)}
              (sut/override-bringer "test@company.com" (jt/local-date))))))
