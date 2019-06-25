@@ -69,17 +69,18 @@
         (debug "trying to match cmd:" cmd)
         (let [result (some (fn [handler] (try-handler handler author cmd))
                            handlers)]
-          (try (update-current-announcement db/db)
-               (catch org.postgresql.util.PSQLException ex
-                 (error "Caught postgres exception:\n"
-                        (-> ex Throwable->map :cause)
-                        "\nwhen trying to update announcement message, this is"
-                        "a benign error at test time")))
+          (if (:update result)
+            (try (update-current-announcement db/db)
+                 (catch org.postgresql.util.PSQLException ex
+                   (error "Caught postgres exception:\n"
+                          (-> ex Throwable->map :cause)
+                          "\nwhen trying to update announcement message, this is"
+                          "a benign error at test time"))))
           result)
         (catch clojure.lang.ExceptionInfo ex
           (error "Handler called by" author "with \"" content
                  "\" caught exception" ex "")
-          (if (-> ex ex-data :public) (format-error (.getMessage ex))))
+          (if (-> ex ex-data :public) {:direct-reply (format-error (.getMessage ex))}))
         (catch Exception ex
           (fatal "Unexpected error processing message by " author "content: \""
                  content "\" exception:" ex)

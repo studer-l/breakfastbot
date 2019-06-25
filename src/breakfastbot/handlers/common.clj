@@ -4,18 +4,51 @@
             [clojure.tools.logging :refer [info debug]]
             [java-time :as jt]))
 
-(def answers {:ok-unhappy "Alright 🙄"
-              :ok-happy "Great!"
-              :ack "🤖 ACKNOWLEDGED 🤖"
-              :error-already-signed-off "ERROR: You already signed off! 😤"
-              :error-no-event "ERROR: No event scheduled for this date 👎"
-              :error-no-member "ERROR: Noone by this email is registered! 💣"
-              :change-responsible
-              (fn [fullname]
-                (str "OK 🙄 New responsible for bringing breakfast is "
-                     (md/mention fullname)))
-              :cancel (fn [when] (str "BREAKFAST ON " (jt/format when) " CANCELED!"))
-              :welcome (fn [email] (str "🎉🎈 Welcome " (md/mention email) "!! 🎉🎈"))})
+
+(def welcome-help
+  (str "🤖 WELCOME TO DISTRAN HUMAN 🤖\n"
+       "* I organize breakfast for every Monday at 9:00\n"
+       "* Attendance is limited to puny humans 🙄\n"
+       "* Every week I choose one member of the team to bring breakfast\n"
+       "* Let me know if you cannot make it\n"
+       "* To learn more, send me the message (in private or in the breakfast "
+       "channel) `@**Breakfast Bot** help`, this is best achieved by typing"
+       " `@Br` and then hitting the `<TAB>` key to complete my name.\n\n"
+       "Study the code on [Github](https://github.com/studer-l/breakfastbot)\n"
+       "Want to talk to a human? Ask @**Lukas Studer** for help."))
+
+(def answers {:ok-unhappy       "Alright 🙄"
+              :ok-happy         "Great!"
+              :ack              "🤖 ACKNOWLEDGED 🤖"
+              :error-signed-off "ERROR: Already signed off! 😤"
+              :error-no-event   "ERROR: No event scheduled for this date 👎"
+              :error-no-member  "ERROR: Noone by this email is registered! 💣"
+              :change-bringer   (fn [fullname]
+                                  (str "OK 🙄 New responsible for bringing breakfast is "
+                                       (md/mention fullname)))
+              :cancel           (fn [when]
+                                  (str "BREAKFAST ON " (jt/format when)
+                                       " CANCELED!"))
+              :welcome          (fn [email]
+                                  (str "🎉🎈 Welcome " (md/mention email)
+                                       "!! 🎉🎈"))
+              :welcome-help     welcome-help
+              :new-bringer      "HUMAN! 🤖 You have been chosen to bring breakfast!"})
+
+(defn changed-bringer?
+  "Checks whether result of `db-ops/safe-remove implies a new person is
+  responsible for breakfast"
+  [result]
+  (and (seqable? result)
+       (= (first result) :ok-new-responsible)))
+
+(defn change-bringer-reply
+  "Create appropriate (full) reply when changing bringer"
+  [new-bringer]
+  {:direct-reply ((:change-bringer answers) new-bringer)
+   :notification {:who new-bringer
+                  :msg (:new-bringer answers)}
+   :update       true})
 
 (defn try-parse-date
   [when]

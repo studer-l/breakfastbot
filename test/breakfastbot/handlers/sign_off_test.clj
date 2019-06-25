@@ -56,7 +56,7 @@
                  ;; at this stage no bringer is selected for this date yet
                  (sut/sign-off "marissa.mucci@company.com" date date)))))
   (t/testing "cannot sign-off twice"
-    (t/is (= (:error-already-signed-off answers)
+    (t/is (= (:error-signed-off answers)
              (sut/sign-off "marissa.mucci@company.com" date date))))
   (t/testing "cannot sign-off from non-existant event"
     (t/is (= (:error-no-event answers)
@@ -66,7 +66,7 @@
   (t/testing "conflicts are resolved"
     (db/set-bringer-by-email db/db
                              {:day date :email "catherina.carollo@company.com"})
-    (t/is (= ((:change-responsible answers) "miles.mcinnis@company.com")
+    (t/is (= ((:change-bringer answers) "miles.mcinnis@company.com")
              (sut/sign-off "catherina.carollo@company.com" date date))))
   (t/testing "when the last person signs off, breakfast is canceled"
     (t/is (= (:ok-unhappy answers)

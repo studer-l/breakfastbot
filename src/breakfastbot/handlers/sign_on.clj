@@ -21,11 +21,12 @@
   (db-ops/prime-attendance db/db when)
   ;; is this a valid event at all?
   (if-not (:exists (db/any-attendance-on-date db/db {:day when}))
-    (:error-no-event answers)
+    {:direct-reply (:error-no-event answers)}
     (do
       (db/insert-attendance-by-email db/db {:email who :day when})
       (debug "sign-on action succeeded")
-      (:ok-happy answers))))
+      {:direct-reply (:ok-happy answers)
+       :update       true})))
 
 (def sign-on-handler {:matcher parse-sign-on
                       :action (fn [{who :who when :when}] (sign-on who when))

@@ -23,13 +23,13 @@
 
     ;; is this a valid event at all?
     (if-not (:exists (db/any-attendance-on-date tx {:day when}))
-      (:error-no-event answers)
+      {:direct-reply (:error-no-event answers)}
       (do
         (if (db/have-bringer-for-day tx {:day when})
           (db/change-bringer-on tx {:day when :email who})
           (db/set-bringer-by-email tx {:day when :email who}))
         (debug "override successful")
-        (:ack answers)))))
+        {:direct-reply (:ack answers)}))))
 
 (def override-bringer-handler
   {:matcher parse-override
