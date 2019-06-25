@@ -1,5 +1,6 @@
 (ns breakfastbot.actions-test
   (:require [breakfastbot.actions :as sut]
+            [breakfastbot.handlers.error :refer [bb-error-handler]]
             [clojure.test :as t]))
 
 (def greedy-handler
@@ -33,3 +34,16 @@
     (t/is (= [:greedy-handler "a@b.c" "baz"]
              (sut/dispatch-handlers [non-handler greedy-handler]
                                     "a@b.c" "@**Breakfast Bot**    baz")))))
+
+(t/deftest error-handler
+  (let [handlers [non-handler non-handler bb-error-handler]] 
+    (t/testing "When sending some random message, it is ignored"
+      (t/is
+       (nil?
+        (sut/dispatch-handlers handlers "a@b.c"
+                               "whatever @**Breakfast Bot** is a fun dude"))))
+    (t/testing (str "When a message starting with the trigger message is sent, "
+                    "but no handler matches, a  helpful message is sent")
+      (t/is some?
+            (sut/dispatch-handlers handlers "a@b.c"
+                                   "@**Breakfast Bot** send help")))))
