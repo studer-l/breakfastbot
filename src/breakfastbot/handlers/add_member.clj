@@ -26,7 +26,9 @@
     (if fullname
       (do (db-ops/add-new-team-member email fullname)
           (debug "Added new member" fullname email ", announcing...")
-          ((:welcome answers) fullname))
+          {:direct-reply ((:welcome answers) fullname)
+           :notification {:who email :message (:welcome-help answers)}
+           :update       true})
       (throw (ex-info (str "Could not find any user with email " email)
                       {:public true})))))
 

@@ -5,9 +5,9 @@
 
 (defn who-brings [date]
   (if-let [bringer (db/get-bringer-on db/db {:day date})]
-    (str "Official Bringer of Breakfast on "
-         (jt/format "d.M" date) " : **@"
-         (:fullname bringer) "**")
+    {:direct-reply (str "Official Bringer of Breakfast on "
+                        (jt/format "d.M" date) " : **@"
+                        (:fullname bringer) "**")}
     (throw (ex-info "Don't know yet" {:public true}))))
 
 (def who-handler {:matcher (fn [author message] (= message "who"))
