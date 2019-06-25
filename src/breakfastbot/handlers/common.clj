@@ -4,7 +4,6 @@
             [clojure.tools.logging :refer [info debug]]
             [java-time :as jt]))
 
-
 (def welcome-help
   (str "🤖 WELCOME TO DISTRAN HUMAN 🤖\n"
        "* I organize breakfast for every Monday at 9:00\n"
