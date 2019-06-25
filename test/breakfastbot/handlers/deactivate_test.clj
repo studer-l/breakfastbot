@@ -22,13 +22,14 @@
 (t/deftest deactivate-action
   (prepare-mock-db)
   (t/testing "error if member does not exist"
-    (t/is (= (:error-no-member answers)
+    (t/is (= {:direct-reply (:error-no-member answers)}
              (sut/deactivate-member next-date "unknown@nosuch.com"))))
   (let [email (-> mock-emails second :email)]
     (t/testing "initially is signed up"
       (t/is (some? (db-ops/attends-event? email not-so-popular-date))))
     (t/testing "succeeds with signed up member"
-      (t/is (= (:ok-unhappy answers)
+      (t/is (= {:direct-reply (:ok-unhappy answers)
+                :update       true}
                (sut/deactivate-member not-so-popular-date email))))
     (t/testing "then is removed from all future events"
       (t/is (nil? (db-ops/attends-event? email not-so-popular-date)))
@@ -41,7 +42,8 @@
     (t/testing "initially is signed up"
       (t/is (some? (db-ops/attends-event? email unpopular-date))))
     (t/testing "succeeds, canceling event"
-      (t/is (= ((:cancel answers) unpopular-date)
+      (t/is (= {:direct-reply ((:cancel answers) unpopular-date)
+                :update       true}
                (sut/deactivate-member unpopular-date email))))))
 
 (t/deftest deactivate-action-reassign-and-cancel
@@ -50,9 +52,12 @@
   (db/reset-bringer-for-day db/db {:day unpopular-date})
   (let [email (-> mock-emails (nth 2) :email)]
     (t/testing "succeeds, marking other person as bringer"
-      (t/is (= ((:change-bringer answers) (-> mock-emails second :email))
+      (t/is (= {:direct-reply ((:change-bringer answers) (-> mock-emails second :email))
+                :notification {:who "catherina.carollo@company.com" :msg (:new-bringer answers)}
+                :update       true}
                (sut/deactivate-member not-so-popular-date email)))))
   (let [email (-> mock-emails second :email)]
     (t/testing "succeeds, canceling the breakfast"
-      (t/is (= ((:cancel answers) not-so-popular-date)
+      (t/is (= {:direct-reply ((:cancel answers) not-so-popular-date)
+                :update       true}
                (sut/deactivate-member not-so-popular-date email))))))
