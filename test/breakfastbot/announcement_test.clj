@@ -62,5 +62,6 @@
 
 
 (t/deftest update-announcement
+  (prepare-mock-db)
   (t/testing "Trying to update non-existing announcement has no effect"
     (t/is (nil? (sut/update-current-announcement db/db (jt/local-date 2050 1 1))))))
