@@ -2,7 +2,7 @@
   (:require [breakfastbot.config :refer [config]]
             [clojure-zulip.core :as zulip]
             [clojure.core.async :as a]
-            [clojure.tools.logging :refer [info debug trace]]
+            [clojure.tools.logging :refer [info debug trace error]]
             [java-time :as jt]
             [mount.core :refer [defstate]]))
 
@@ -42,6 +42,7 @@
     (a/go-loop []
       (let [[msg channel] (a/alts! [kill-channel async-src] :priority true)]
         (cond (= channel kill-channel) (info "Async handler closing")
-              :else                    (do (sync-receiver msg)
+              :else                    (do (if-not (instance? Exception msg) (sync-receiver msg)
+                                                   (error "Ignoring exception, continuing"))
                                            (recur)))))
     kill-channel))

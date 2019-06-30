@@ -1,13 +1,11 @@
 (ns breakfastbot.handlers.who-brings
   (:require [breakfastbot.date-utils :refer [next-monday]]
-            [breakfastbot.db :as db]
-            [java-time :as jt]))
+            [breakfastbot.handlers.common :refer [answers]]
+            [breakfastbot.db :as db]))
 
 (defn who-brings [date]
   (if-let [bringer (db/get-bringer-on db/db {:day date})]
-    {:direct-reply (str "Official Bringer of Breakfast on "
-                        (jt/format "d.M" date) " : **@"
-                        (:fullname bringer) "**")}
+    {:direct-reply ((:who-brings answers) (:fullname bringer) date)}
     (throw (ex-info "Don't know yet" {:public true}))))
 
 (def who-handler {:matcher (fn [author message] (= message "who"))
