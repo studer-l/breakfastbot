@@ -171,4 +171,9 @@
   (t/testing "on a date with attendees, prepares it"
     (let [attendance-data (db-ops/prepare-breakfast db/db next-date)]
       (t/is (some? (:bringer attendance-data)))
+      (t/is (some? (:attendees attendance-data)))))
+
+  (t/testing "the bringer and attendees are not changed on next invocation"
+    (let [attendance-data (db-ops/prepare-breakfast db/db next-date)]
+      (t/is (some? (:bringer attendance-data)))
       (t/is (some? (:attendees attendance-data))))))

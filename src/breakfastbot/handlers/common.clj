@@ -16,6 +16,11 @@
        "Study the code on [Github](https://github.com/studer-l/breakfastbot)\n"
        "Want to talk to a human? Ask @**Lukas Studer** for help."))
 
+(defn who-brings-answer
+  [name date]
+  (str "Official Bringer of Breakfast on " (jt/format "d.M" date)
+       " : **@" name "**"))
+
 (def answers {:ok-unhappy       "Alright 🙄"
               :ok-happy         "Great!"
               :ack              "🤖 ACKNOWLEDGED 🤖"
@@ -32,7 +37,8 @@
                                   (str "🎉🎈 Welcome " (md/mention email)
                                        "!! 🎉🎈"))
               :welcome-help     welcome-help
-              :new-bringer      "HUMAN! 🤖 You have been chosen to bring breakfast!"})
+              :new-bringer      "HUMAN! 🤖 You have been chosen to bring breakfast!"
+              :who-brings       who-brings-answer})
 
 (defn changed-bringer?
   "Checks whether result of `db-ops/safe-remove implies a new person is
