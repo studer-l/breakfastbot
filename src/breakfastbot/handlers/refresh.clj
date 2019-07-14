@@ -7,7 +7,8 @@
 
 (defn refresh-action []
   (refresh-names db/db (zulip/sync* (zulip/members zulip-conn)))
-  {:direct-reply (:ack answers)})
+  {:direct-reply (:ack answers)
+   :update       true})
 
 (def refresh-handler {:matcher (fn [_ message] (= message "refresh"))
                       :action  refresh-action
