@@ -1,16 +1,12 @@
-(ns breakfastbot.handlers.refresh-names
-  (:require [breakfastbot.chatting :refer [zulip-conn]]
-            [breakfastbot.db :as db]
-            [breakfastbot.handlers.common :refer [answers]]
-            [clojure-zulip.core :as zulip]))
-
+(ns breakfastbot.refresh-names
+  (:require [breakfastbot.db :as db]))
 
 (defn- is-success? [reply]
-  (= "success"  (:result member-reply)))
+  (= "success"  (:result reply)))
 
 (defn parse-reply
   [reply]
-  (if (is-success? member-reply)
+  (if (is-success? reply)
     (->> reply
          :members
          (map (fn [m] [(:email m) (:full_name m)]))
