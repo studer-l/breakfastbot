@@ -28,3 +28,6 @@ update members set active = :active where email = :email;
 
 -- :name get-member-by-email :? :1
 select email, fullname, active from members where email = :email;
+
+-- :name update-member-fullname :! :1
+update members set fullname = :fullname where email = :email;
