@@ -2,6 +2,7 @@
   (:require [breakfastbot.chatting :as chatting :refer [zulip-conn]]
             [breakfastbot.db :as db]
             [breakfastbot.db-ops :as db-ops]
+            [breakfastbot.refresh-names :refer [refresh-names]]
             [breakfastbot.markdown :as md]
             [breakfastbot.date-utils :refer [next-monday]]
             [breakfastbot.config :refer [config]]
@@ -46,6 +47,8 @@
     (when (and (time-to-announce? now-datetime)
                (db/any-attendance-on-date db/db {:day next-event-date})
                (not (bringer-decided-on next-event-date)))
+      ;; also refresh names just to be sure
+      (refresh-names db/db (zulip/sync* (zulip/members zulip-conn)))
       (debug "Appropriate time to announce breakfast and have not done it yet")
       (when-let [attendee-data (db-ops/prepare-breakfast db/db next-event-date)]
         (debug "Scheduled breakfast:" attendee-data)

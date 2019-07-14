@@ -47,11 +47,11 @@
   (t/testing "Mutates db"
     (prepare-mock-db)
     (t/testing "updating one record"
-      (t/is (= '(1) (sut/refresh-names db/db mock-reply-ok2))))
+      (t/is (= 1 (sut/refresh-names db/db mock-reply-ok2))))
     (t/testing "changes one name"
       (t/is (= "Cahterina Carôllo"
                (:fullname (db/get-member-by-email
                            db/db
                            {:email "catherina.carollo@company.com"}))))))
   (t/testing "Aborts on error"
-    (t/is (empty? (sut/refresh-names db/db mock-reply-error)))))
+    (t/is (= 0 (sut/refresh-names db/db mock-reply-error)))))

@@ -1,5 +1,6 @@
 (ns breakfastbot.refresh-names
-  (:require [breakfastbot.db :as db]))
+  (:require [breakfastbot.db :as db]
+            [clojure.tools.logging :as log]))
 
 (defn- is-success? [reply]
   (= "success"  (:result reply)))
@@ -26,10 +27,16 @@
   "Applies diffs as computed by `difference-zulip-and-db to db-spec"
   [db-spec diffs]
   (for [[email new-name] diffs]
-    (db/update-member-fullname db-spec {:email email :fullname new-name})))
+    (do (log/info "Updating name of" email "to" new-name)
+        (db/update-member-fullname db-spec {:email email :fullname new-name}))))
 
-(defn refresh-names [db-spec zulip-reply]
-  (some->> zulip-reply
-           parse-reply
-           (difference-zulip-and-db (db/get-members db-spec))
-           (update-db-from-diff db-spec)))
+(defn refresh-names
+  "Refresh db with updated names from zulip-reply. Returns number of mutations."
+  [db-spec zulip-reply]
+  (or
+   (some->> zulip-reply
+            parse-reply
+            (difference-zulip-and-db (db/get-members db-spec))
+            (update-db-from-diff db-spec)
+            count)
+   0))
