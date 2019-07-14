@@ -6,6 +6,7 @@
             [breakfastbot.handlers.sign-on :refer [sign-on-handler]]
             [breakfastbot.handlers.who-brings :refer [who-handler]]
             [breakfastbot.handlers.deactivate :refer [deactivate-handler]]
+            [breakfastbot.handlers.refresh :refer [refresh-handler]]
             [breakfastbot.handlers.error :refer [bb-error-handler]]
             [breakfastbot.announcement :refer [update-current-announcement]]
             [clojure.string :as s]
@@ -39,6 +40,7 @@
                      sign-on-handler override-bringer-handler deactivate-handler])
 (def handlers (conj basic-handlers
                     (handlers->help-handler basic-handlers)
+                    refresh-handler
                     bb-error-handler))
 
 (def help-handler
