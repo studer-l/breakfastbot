@@ -5,7 +5,7 @@
             [breakfastbot.refresh-names :refer [refresh-names]]
             [clojure-zulip.core :as zulip]))
 
-(defn refresh-action []
+(defn refresh-action [_]
   (refresh-names db/db (zulip/sync* (zulip/members zulip-conn)))
   {:direct-reply (:ack answers)
    :update       true})
