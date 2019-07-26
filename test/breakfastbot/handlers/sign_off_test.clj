@@ -69,8 +69,8 @@
                              {:day date :email "catherina.carollo@company.com"})
     (t/is (= {:direct-reply ((:change-bringer answers) "miles.mcinnis@company.com")
               :update       true
-              :notification {:who "miles.mcinnis@company.com"
-                             :msg (:new-bringer answers)}}
+              :notification {:who     "miles.mcinnis@company.com"
+                             :message (:new-bringer answers)}}
              (sut/sign-off "catherina.carollo@company.com" date date))))
   (t/testing "when the last person signs off, breakfast is canceled"
     (t/is (= {:direct-reply (:ok-unhappy answers)

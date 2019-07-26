@@ -51,8 +51,8 @@
   "Create appropriate (full) reply when changing bringer"
   [new-bringer]
   {:direct-reply ((:change-bringer answers) new-bringer)
-   :notification {:who new-bringer
-                  :msg (:new-bringer answers)}
+   :notification {:who     new-bringer
+                  :message (:new-bringer answers)}
    :update       true})
 
 (defn try-parse-date
