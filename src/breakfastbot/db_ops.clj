@@ -40,11 +40,10 @@
   date is set to today, so they wont have to bring breakfast for some time."
   [email fullname]
   (let [{new-id :id} (db/insert-member db/db {:email email :fullname fullname})
-        primed-from (jt/local-date)
-        primed-to (currently-primed)]
+        primed-from  (jt/local-date)
+        primed-to    (currently-primed)]
     (dorun (for [monday (mondays primed-from primed-to)]
-             (db/insert-attendance-by-id db/db {:day monday
-                                                :id new-id})))
+             (db/insert-attendance-by-id db/db {:day monday :id new-id})))
     (info "Added new team member" fullname)))
 
 (defn- choose-bringer-by-attendance-counts
@@ -61,11 +60,10 @@
   Returns bringer email and fullname if one is chosen, nil otherwise."
   [db date]
   (jdbc/with-db-transaction [tx db]
-    (if-let [id (choose-bringer-by-attendance-counts tx date)]
-      (do
-        (db/set-bringer-on tx {:day date :id id})
-        (info "bringer set for" (jt/format "d.M.yyyy" date) "to" id)
-        (db/get-member-by-id tx {:id id})))))
+    (when-let [id (choose-bringer-by-attendance-counts tx date)]
+      (db/set-bringer-on tx {:day date :id id})
+      (info "bringer set for" (jt/format "d.M.yyyy" date) "to" id)
+      (db/get-member-by-id tx {:id id}))))
 
 (defn- get-or-choose-bringer
   [db date]
@@ -107,7 +105,7 @@
           (debug "User" who "was supposed to bring breakfast on date"
                  (jt/format date))
           (db/reset-bringer-for-day db-con {:day date}))
-        (if (zero? (db/remove-attendance-by-email-at db-con {:day date
+        (if (zero? (db/remove-attendance-by-email-at db-con {:day   date
                                                              :email who}))
           ;; ... either user typo and there's no event, or there is no breakfast on
           ;; this date, but which is it?!
