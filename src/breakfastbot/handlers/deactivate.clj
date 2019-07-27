@@ -12,13 +12,10 @@
   (if (re-matches #"^deactivate \S+\@\S+\.\S+$" message)
     (subs message 11)))
 
-(defn- member-exists? [db-con email]
-  (-> db-con (db/get-member-by-email {:email email}) some?))
-
 (defn deactivate-member [next-date email]
   ;; check whether this email is known
   (jdbc/with-db-transaction [db-con db/db]
-    (if-not (member-exists? db-con email)
+    (if (db-ops/no-such-member? db-con email)
       ;; Member did not exist
       {:direct-reply (:error-no-member answers)}
       (do

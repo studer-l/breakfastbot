@@ -18,10 +18,6 @@
   [db date]
   (not (:exists (db/any-attendance-on-date db {:day date}))))
 
-(defn- no-member
-  [db email]
-  (nil? (db/get-member-by-email db {:email email})))
-
 (defn- do-sign-on
   "Perform actual sign-on if date + email checked out; Returns response"
   [who when]
@@ -36,9 +32,9 @@
   (debug "performing sign-on for" who "on" (jt/format when))
   (db-ops/prime-attendance db/db when)
   (cond
-    (no-event db/db when) {:direct-reply (:error-no-event answers)}
-    (no-member db/db who) {:direct-reply (:error-no-member answers)}
-    :else                 (do-sign-on who when)))
+    (no-event db/db when)              {:direct-reply (:error-no-event answers)}
+    (db-ops/no-such-member? db/db who) {:direct-reply (:error-no-member answers)}
+    :else                              (do-sign-on who when)))
 
 (def sign-on-handler {:matcher parse-sign-on
                       :action (fn [{who :who when :when}] (sign-on who when))

@@ -80,11 +80,16 @@
   [db date]
   ;; use the fact that nested transactions are absorbed by the outer transaction
   (jdbc/with-db-transaction [tx db]
-    (let [bringer (get-or-choose-bringer tx date)
+    (let [bringer   (get-or-choose-bringer tx date)
           attendees (vec (db/get-all-attendees tx {:day date}))]
       (debug "bringer = " bringer ", attendees = " attendees)
-      (if (not-any? nil? [bringer attendees])
+      (when (not-any? nil? [bringer attendees])
         {:bringer bringer :attendees attendees}))))
+
+(defn no-such-member?
+  "Returns true if where is no such member"
+  [db email]
+  (nil? (db/get-member-by-email db {:email email})))
 
 (defn safe-remove
   "Remove `who` from event `when` considering next event on date `next-date`
@@ -96,7 +101,7 @@
   - `:no-event`
   - `:no-member`"
   [db-con who date next-date]
-  (if (nil? (db/get-member-by-email db-con {:email who})) :no-member
+  (if (no-such-member? db-con who) :no-member
       (let [was-supposed-to-bring
             (and (= date next-date)
                  (= who (:email (db/get-bringer-on db-con {:day next-date}))))]
