@@ -24,4 +24,7 @@
              (sut/sign-on (-> mock-emails first :email) unpopular-date))))
   (t/testing "refuses sing-on for dates where there is no breakfast"
     (t/is (= {:direct-reply (:error-no-event answers)}
-             (sut/sign-on "test@company.com" (jt/local-date))))))
+             (sut/sign-on "test@company.com" (jt/local-date)))))
+  (t/testing "refuses to sign-on somebody who is not registered"
+    (t/is (= {:direct-reply (:error-no-member answers)}
+             (sut/sign-on "noone@company.com" unpopular-date)))))
