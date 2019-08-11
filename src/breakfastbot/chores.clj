@@ -13,8 +13,10 @@
     (a/go-loop []
       (let [[_ channel] (a/alts! [kill-channel (a/timeout msecs)]
                                  :priority true)]
-        (cond (= channel kill-channel) (info "Stopping reoccurring task")
-              :if-timed-out (do (func) (recur)))))
+        (cond
+          (= channel kill-channel) (info "Stopping reoccurring task")
+          ;; if timed out
+          :else                    (do (func) (recur)))))
     kill-channel))
 
 (def minute-in-millis (* 1000 60))
