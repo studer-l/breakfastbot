@@ -1,6 +1,7 @@
 (ns breakfastbot.handlers.override-test
   (:require [breakfastbot.db :as db]
-            [breakfastbot.db-test :refer [prepare-mock-db unpopular-date mock-emails]]
+            [breakfastbot.db-test :refer [prepare-mock-db unpopular-date
+                                          next-date mock-emails]]
             [breakfastbot.handlers.common :refer [answers]]
             [breakfastbot.handlers.override :as sut]
             [clojure.test :as t]
@@ -24,4 +25,8 @@
                                    unpopular-date))))
   (t/testing "refuses sing-on for dates where there is no breakfast"
     (t/is (= {:direct-reply (:error-no-event answers)}
-             (sut/override-bringer "test@company.com" (jt/local-date))))))
+             (sut/override-bringer "test@company.com" (jt/local-date)))))
+  (t/testing "can set bringer on date where no bringer is set yet"
+    (t/is (= {:direct-reply (:ack answers)}
+             (sut/override-bringer (-> mock-emails first :email)
+                                   next-date)))))
