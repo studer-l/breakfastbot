@@ -8,7 +8,7 @@
     {:direct-reply ((:who-brings answers) (:fullname bringer) date)}
     (throw (ex-info "Don't know yet" {:public true}))))
 
-(def who-handler {:matcher (fn [author message] (= message "who"))
-                  :action (fn [_] (who-brings (next-monday)))
-                  :help (str "\"@**breakfastbot** who\" -- "
-                             "Ask who will bring breakfast next")})
+(def who-handler {:matcher (fn [_ message] (= message "who"))
+                  :action  (fn [_] (who-brings (next-monday)))
+                  :help    (str "\"@**breakfastbot** who\" -- "
+                                "Ask who will bring breakfast next")})
