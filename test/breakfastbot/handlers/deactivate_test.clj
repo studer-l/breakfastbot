@@ -1,14 +1,14 @@
 (ns breakfastbot.handlers.deactivate-test
-  (:require [breakfastbot.handlers.deactivate :as sut]
-            [breakfastbot.handlers.common :refer [answers]]
+  (:require [breakfastbot.db :as db]
+            [breakfastbot.db-ops :as db-ops]
             [breakfastbot.db-test :refer [prepare-mock-db
                                           not-so-popular-date
                                           unpopular-date
                                           next-date mock-emails]]
-            [mount.core :as mount]
-            [breakfastbot.db :as db]
+            [breakfastbot.handlers.common :refer [answers]]
+            [breakfastbot.handlers.deactivate :as sut]
             [clojure.test :as t]
-            [breakfastbot.db-ops :as db-ops]))
+            [mount.core :as mount]))
 
 (mount/start #'db/db)
 

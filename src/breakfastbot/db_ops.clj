@@ -12,6 +12,9 @@
    (for [{id :id} (db/get-active-members db/db)]
      (db/insert-attendance-by-id db/db {:day date :id id}))))
 
+(defn is-active? [dbspec email]
+  (-> dbspec (db/get-member-by-email {:email email}) :active))
+
 (defn- currently-primed
   [] (-> db/db
          db/get-last-primed

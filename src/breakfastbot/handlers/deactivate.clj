@@ -36,5 +36,5 @@
 (def deactivate-handler {:matcher parse-deactivate-member
                          :action  (fn [who]
                                     (deactivate-member (next-monday) who))
-                         :help    (str "\"@**breakfastbot** deactive email\""
+                         :help    (str "\"@**breakfastbot** deactivate email\""
                                        " -- Deactivate member by email")})
