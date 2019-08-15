@@ -1,17 +1,18 @@
 (ns breakfastbot.actions
-  (:require [breakfastbot.handlers.add-member :refer [add-member-handler]]
+  (:require [breakfastbot.announcement :refer [update-current-announcement]]
+            [breakfastbot.db :as db]
+            [breakfastbot.handlers.add-member :refer [add-member-handler]]
+            [breakfastbot.handlers.deactivate :refer [deactivate-handler]]
+            [breakfastbot.handlers.error :refer [bb-error-handler]]
             [breakfastbot.handlers.help :refer [handlers->help-handler]]
             [breakfastbot.handlers.override :refer [override-bringer-handler]]
+            [breakfastbot.handlers.reactivate :refer [reactivate-handler]]
+            [breakfastbot.handlers.refresh :refer [refresh-handler]]
             [breakfastbot.handlers.sign-off :refer [sign-off-handler]]
             [breakfastbot.handlers.sign-on :refer [sign-on-handler]]
             [breakfastbot.handlers.who-brings :refer [who-handler]]
-            [breakfastbot.handlers.deactivate :refer [deactivate-handler]]
-            [breakfastbot.handlers.refresh :refer [refresh-handler]]
-            [breakfastbot.handlers.error :refer [bb-error-handler]]
-            [breakfastbot.announcement :refer [update-current-announcement]]
             [clojure.string :as s]
-            [clojure.tools.logging :refer [info error fatal debug]]
-            [breakfastbot.db :as db])
+            [clojure.tools.logging :refer [info error fatal debug]])
   (:import (org.postgresql.util PSQLException)))
 
 ;; Structure of Handler is a map with the keys :matcher :action  and :help
@@ -37,7 +38,8 @@
 
 ;; all handlers except help-handler
 (def basic-handlers [who-handler sign-off-handler add-member-handler
-                     sign-on-handler override-bringer-handler deactivate-handler])
+                     sign-on-handler override-bringer-handler deactivate-handler
+                     reactivate-handler])
 (def handlers (conj basic-handlers
                     (handlers->help-handler basic-handlers)
                     refresh-handler

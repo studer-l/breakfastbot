@@ -16,6 +16,10 @@
        "Study the code on [Github](https://github.com/studer-l/breakfastbot)\n"
        "Want to talk to a human? Ask @**Lukas Studer** for help."))
 
+(def reactivation-msg
+  (str "🤖 YOU HAVE BEEN REACTIVATED AND"
+       " ARE EXPECTED TO ATTEND BREAKFASTS AGAIN 🤖"))
+
 (defn who-brings-answer
   [name date]
   (str "Official Bringer of Breakfast on " (jt/format "d.M" date)
@@ -27,6 +31,7 @@
               :error-signed-off "ERROR: Already signed off! 😤"
               :error-no-event   "ERROR: No event scheduled for this date 👎"
               :error-no-member  "ERROR: Noone by this email is registered! 💣"
+              :error-active     "ERROR: Already marked as active!"
               :change-bringer   (fn [fullname]
                                   (str "OK 🙄 New responsible for bringing breakfast is "
                                        (md/mention fullname)))
@@ -36,6 +41,7 @@
               :welcome          (fn [email]
                                   (str "🎉🎈 Welcome " (md/mention email)
                                        "!! 🎉🎈"))
+              :reactivate       reactivation-msg
               :welcome-help     welcome-help
               :new-bringer      "HUMAN! 🤖 You have been chosen to bring breakfast!"
               :who-brings       who-brings-answer})
