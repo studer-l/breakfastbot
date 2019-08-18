@@ -1,7 +1,7 @@
 (ns breakfastbot.handlers.sign-off-test
   (:require [breakfastbot.date-utils :refer [next-monday]]
             [breakfastbot.db :as db]
-            [breakfastbot.db-test :refer [prepare-mock-db]]
+            [breakfastbot.db-test :refer [prepare-mock-db next-date]]
             [breakfastbot.handlers.common :refer [answers]]
             [breakfastbot.handlers.sign-off :as sut]
             [clojure.test :as t]
@@ -46,7 +46,7 @@
     (t/is (thrown? Exception (sut/parse-sign-off "date.in.past@company.org"
                                                  "cannot me 1.1.1980")))))
 
-(def date (jt/local-date 2019 1 4))
+(def date next-date)
 
 ;; testing the handler is superbly complicated
 (t/deftest test-sign-off-action
