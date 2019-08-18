@@ -15,21 +15,22 @@
 (defn is-active? [dbspec email]
   (-> dbspec (db/get-member-by-email {:email email}) :active))
 
-(defn- currently-primed
-  [] (-> db/db
-         db/get-last-primed
-         :attendance_primed_until
-         jt/local-date))
+(defn currently-primed
+  ([] (currently-primed db/db))
+  ([dbspec] (-> dbspec
+                db/get-last-primed
+                :attendance_primed_until
+                jt/local-date)))
 
 (defn prime-attendance
   "Add people preemptively to the attendance table"
   ([dbspec] ;; default 30 days in the future
    (let [primed-from (jt/local-date)
-         primed-to (jt/plus primed-from (jt/days 30))]
+         primed-to   (jt/plus primed-from (jt/days 30))]
      (prime-attendance dbspec primed-to)))
   ([dbspec prime-until]
    (let [primed-from (currently-primed)
-         primed-to prime-until]
+         primed-to   prime-until]
      (info "Priming from"
            (jt/format "d.M.yyyy" primed-from)
            "until"
@@ -38,15 +39,24 @@
               (prime-breakfast monday)))
      (db/set-last-primed dbspec {:date (jt/max primed-from primed-to)}))))
 
+(defn prime-single-member-attendance-id
+  [dbspec prime-from prime-to id]
+  (dorun (for [monday (mondays prime-from prime-to)]
+           (db/insert-attendance-by-id dbspec {:day monday :id id}))))
+
+(defn prime-single-member-attendance-email
+  [dbspec prime-from prime-to email]
+  (dorun (for [monday (mondays prime-from prime-to)]
+           (db/insert-attendance-by-email dbspec {:day monday :email email}))))
+
 (defn add-new-team-member
   "They are signed up for all currently scheduled breakfasts and their bring
   date is set to today, so they wont have to bring breakfast for some time."
   [email fullname]
   (let [{new-id :id} (db/insert-member db/db {:email email :fullname fullname})
-        primed-from  (jt/local-date)
-        primed-to    (currently-primed)]
-    (dorun (for [monday (mondays primed-from primed-to)]
-             (db/insert-attendance-by-id db/db {:day monday :id new-id})))
+        prime-from   (jt/local-date)
+        prime-to     (currently-primed)]
+    (prime-single-member-attendance-id db/db prime-from prime-to new-id)
     (info "Added new team member" fullname)))
 
 (defn- choose-bringer-by-attendance-counts

@@ -53,7 +53,7 @@
 (def popular-date (jt/local-date 2019 1 1))
 (def not-so-popular-date (jt/local-date 2019 1 2))
 (def unpopular-date (jt/local-date 2019 1 3))
-(def next-date (jt/local-date 2019 1 4))
+(def next-date (jt/local-date 2019 1 7))
 
 (defn email-of [i] (-> mock-emails (nth i) :email))
 
