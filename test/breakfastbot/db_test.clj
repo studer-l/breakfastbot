@@ -146,10 +146,29 @@
                   ;; retrieve result
                   (db/get-all-attendees db/db {:day (jt/local-date)})))))))
 
+(t/deftest prime-attendance
+  (prepare-mock-db)
+  (db-ops/prime-attendance db/db)
+  (t/testing "does not revert previous sign off"
+    (let [date  (next-monday)
+          email (-> mock-emails first :email)]
+      ;; When a person is signed off from an event
+      (t/is (= 1 (db/remove-attendance-by-email-at db/db
+                                                   {:email email
+                                                    :day   date})))
+      ;; (check that the person is now really signed off)
+      (t/is (not (db-ops/attends-event? email date)))
+
+      ;; When prime-attendance is called with no arguments (background chore)
+      (db-ops/prime-attendance db/db)
+
+      ;; The person is still signed off
+      (t/is (not (db-ops/attends-event? email date))))))
+
 (t/deftest add-new-member
   (t/testing "can add new member"
     (t/is (some #(= % {:fullname "nat"
-                       :email "natalie.newcomer@company.com"})
+                       :email    "natalie.newcomer@company.com"})
                 (do (reset-db! db/db)
                     ;; insert mock team
                     (doall (for [user mock-users] (db/insert-member db/db user)))
