@@ -2,6 +2,7 @@
   (:require [breakfastbot.chatting :as chatting :refer [zulip-conn]]
             [breakfastbot.db :as db]
             [breakfastbot.db-ops :as db-ops]
+            [breakfastbot.handlers.common :as common]
             [breakfastbot.refresh-names :refer [refresh-names]]
             [breakfastbot.markdown :as md]
             [breakfastbot.date-utils :refer [next-monday]]
@@ -64,7 +65,11 @@
                                         (chatting/date->subject next-event-date)
                                         (announce-breakfast-message attendee-data))]
       (db/insert-announce-msg-id db/db {:day next-event-date
-                                        :id (-> ch a/<!! :id)}))
+                                        :id  (-> ch a/<!! :id)})
+      ;; let bringer know personally
+      (zulip/send-private-message zulip-conn
+                                  (get-in attendee-data [:bringer :email])
+                                  (:new-bringer common/answers)))
     (debug "Breakfast announced!")))
 
 (defn update-current-announcement
