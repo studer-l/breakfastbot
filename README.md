@@ -13,8 +13,13 @@ created this Zulip chatbot! 😀
 
 - Allows team members to sign on / off from events
 - Chooses a responsible person for each breakfast
-- Announce attendees / bringer each Friday at 15:00
+- Announce attendees / bringer each Friday at 12:00
 
+## Scheduling algorithm
+
+Given a set of attendees, the attendee with the highest count of events attended
+since last bringing breakfast (or total events attended, if they never brought
+breakfast) is chosen to bring breakfast.
 
 ## Deployment
 
