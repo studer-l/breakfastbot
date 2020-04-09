@@ -391,12 +391,3 @@
 	eliza-rules))
 
 (defn get-eliza-reply  [input]  (clojure.string/replace (use-eliza-rules (clojure.string/lower-case (clojure.string/replace input #"[!?.]" ""))) "  " " "))
-
-(defn eliza []
-  (flush)
-  (while true
-    (print "Eliza> ")
-    (flush)
-    (println (get-eliza-reply (read-line)))))
-
-(println "i can come")
