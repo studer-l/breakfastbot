@@ -2,7 +2,5 @@
 
 (def bb-error-handler
   {:matcher (fn [_ _] true)
-   :action  (fn [_] {:direct-reply (str "Could not understand 🤖\n"
-                                        "Try `@**Breakfastbot** help` to see a "
-                                        "list of commands")})
+   :action  (fn [message] {:direct-reply ((:eliza-reply answers) message)})
    :help    "Can't help you any further than that"})

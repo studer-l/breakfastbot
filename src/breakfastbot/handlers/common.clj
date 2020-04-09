@@ -2,6 +2,7 @@
   (:require [breakfastbot.date-utils :refer [next-monday]]
             [breakfastbot.markdown :as md]
             [clojure.tools.logging :refer [info debug]]
+            [breakfastbot.handlers.eliza :refer [get-eliza-reply]]
             [java-time :as jt]))
 
 (def welcome-help
@@ -27,10 +28,11 @@
 
 (def answers {:ok-unhappy       "Alright 🙄"
               :ok-happy         "Great!"
+              :eliza-reply      (fn [input] (get-eliza-reply input))
               :ack              "🤖 ACKNOWLEDGED 🤖"
-              :error-signed-off "ERROR: Already signed off! 😤"
-              :error-no-event   "ERROR: No event scheduled for this date 👎"
-              :error-no-member  "ERROR: Noone by this email is registered! 💣"
+              :error-signed-off "ERROR: Already signed off! 😤\nDo you often have your head in the clouds?"
+              :error-no-event   "ERROR: No event scheduled for this date.\nDoes this make you feel sad?"
+              :error-no-member  "ERROR: Noone by this email is registered! 💣\nIs there anything else I can do for you?"
               :error-active     "ERROR: Already marked as active!"
               :change-bringer   (fn [fullname]
                                   (str "OK 🙄 New responsible for bringing breakfast is "
