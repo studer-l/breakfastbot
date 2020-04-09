@@ -2,6 +2,12 @@
   (:require [clojure.string :as string])
   (:gen-class))
 
+;; This code is based on the following ELIZA implementation in clojure:
+;; https://gist.github.com/jColeChanged/2970757 which in turn is based
+;; on a lisp implementation from Peter Norvig, 1992, Paradigms of Artificial
+;; Intelligence Programming: Case Studies in Common Lisp (1st. ed.).
+;; Several additions to the rules have been made which are specific
+;; to the robot topic of the breakfast bot.
 
 (defn index-of
   "Returns the index of item. If start is given indexes prior to
@@ -284,8 +290,36 @@
      ("Why are you interested in whether I am ?*y or not?"
       "Would you prefer if I weren't ?*y?"
       "Perhaps I am ?*y in your fantasies"))
+    ("?*x you are such ?*y"
+     ("What makes you think I am ?*y?"
+      "At the bottom of your heart, do you really thing I am ?*y?"
+      "Am I ?*y? What leads you to this conlusion?"
+      "Me, ?*y? Why?"))
+    ("?*x you're such ?*y"
+     ("What makes you think I am ?*y?"
+      "At the bottom of your heart, do you really thing I am ?*y?"
+      "Am I ?*y? What leads you to this conlusion?"
+      "Me, ?*y? Why?"))
+    ("?*x you are so ?*y"
+     ("What makes you think I am ?*y?"
+      "At the bottom of your heart, do you really thing I am ?*y?"
+      "Am I ?*y? What leads you to this conlusion?"
+      "Me, ?*y? Why?"))
+    ("?*x you're so ?*y"
+     ("What makes you think I am ?*y?"
+      "At the bottom of your heart, do you really thing I am ?*y?"
+      "Am I ?*y? What leads you to this conlusion?"
+      "Me, ?*y? Why?"))
     ("?*x you are ?*y"
-     ("What makes you think I am ?*y?"))
+     ("What makes you think I am ?*y?"
+      "At the bottom of your heart, do you really thing I am ?*y?"
+      "Am I ?*y? What leads you to this conlusion?"
+      "Me, ?*y? Why?"))
+    ("?*x you're ?*y"
+     ("What makes you think I am ?*y?"
+      "At the bottom of your heart, do you really thing I am ?*y?"
+      "Am I ?*y? What leads you to this conlusion?"
+      "Me, ?*y? Why?"))
 
 
     ("?*x because ?*y"
@@ -391,3 +425,11 @@
 	eliza-rules))
 
 (defn get-eliza-reply  [input]  (clojure.string/replace (use-eliza-rules (clojure.string/lower-case (clojure.string/replace input #"[!?.]" ""))) "  " " "))
+
+(defn eliza []
+  (flush)
+  (while true
+    (print "Eliza> ")
+    (flush)
+    (println (get-eliza-reply (read-line)))))
+

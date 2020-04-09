@@ -28,7 +28,7 @@
 
 (def answers {:ok-unhappy       "Alright 🙄"
               :ok-happy         "Great!"
-              :eliza-reply      (fn [input] (get-eliza-reply input))
+              :eliza-reply      get-eliza-reply
               :ack              "🤖 ACKNOWLEDGED 🤖"
               :error-signed-off "ERROR: Already signed off! 😤\nDo you often have your head in the clouds?"
               :error-no-event   "ERROR: No event scheduled for this date.\nDoes this make you feel sad?"
