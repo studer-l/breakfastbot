@@ -1,4 +1,5 @@
-(ns breakfastbot.handlers.error)
+(ns breakfastbot.handlers.error
+  (:require [breakfastbot.handlers.common :refer [answers]]))
 
 (def bb-error-handler
   {:matcher (fn [_ message] message)
