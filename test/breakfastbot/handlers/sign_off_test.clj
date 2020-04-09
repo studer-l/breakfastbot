@@ -51,7 +51,7 @@
 ;; testing the handler is superbly complicated
 (t/deftest test-sign-off-action
   (t/testing "can sign-off prior to commitment"
-    (t/is (= {:direct-reply (:ok-unhappy answers)
+    (t/is (= {:direct-reply ((:eliza-reply answers) "i cannot come")
               :update       true}
              (do (prepare-mock-db)
                  ;; at this stage no bringer is selected for this date yet
