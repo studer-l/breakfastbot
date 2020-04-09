@@ -19,7 +19,7 @@
 (t/deftest sign-on-action
   (t/testing "can sign on on known date"
     (prepare-mock-db)
-    (t/is (= {:direct-reply (:ok-happy answers)
+    (t/is (= {:direct-reply ((:eliza-reply answers) "i can come")
               :update       true}
              (sut/sign-on (-> mock-emails first :email) unpopular-date))))
   (t/testing "refuses sing-on for dates where there is no breakfast"
