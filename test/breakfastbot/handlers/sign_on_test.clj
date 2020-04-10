@@ -21,7 +21,7 @@
     (prepare-mock-db)
     (t/is (.startsWith
              (:direct-reply (sut/sign-on (-> mock-emails first :email) unpopular-date)) (:ok-happy answers))))
-  (t/testing "can sign on on known date - update
+  (t/testing "can sign on on known date - update"
     (prepare-mock-db)
     (t/is (= true
              (:update (sut/sign-on (-> mock-emails first :email) unpopular-date)))))
