@@ -58,7 +58,7 @@
     (t/is (= true
              (:update (do (prepare-mock-db)
                  ;; at this stage no bringer is selected for this date yet
-                 (sut/sign-off "marissa.mucci@company.com" date date)))))
+                 (sut/sign-off "marissa.mucci@company.com" date date))))))
   (t/testing "cannot sign-off twice"
     (t/is (= {:direct-reply (:error-signed-off answers)}
              (sut/sign-off "marissa.mucci@company.com" date date))))
