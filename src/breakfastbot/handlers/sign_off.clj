@@ -24,7 +24,7 @@
   (db-ops/prime-attendance db/db when)
   (let [res (db-ops/safe-remove db/db who when next-date)]
     (cond
-      (= res :ok)            {:direct-reply (:ok-unhappy answers)
+      (= res :ok)            {:direct-reply (str (:ok-unhappy answers) " " ((:eliza-reply answers) "i cannot come"))
                               :update       true}
       (= res :ok-cancel)     {:direct-reply ((:cancel answers) next-date)
                               :update       true}
