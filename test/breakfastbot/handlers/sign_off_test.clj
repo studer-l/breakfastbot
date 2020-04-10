@@ -76,9 +76,8 @@
                              :message (:new-bringer answers)}}
              (sut/sign-off "catherina.carollo@company.com" date date))))
   (t/testing "when the last person signs off, breakfast is canceled"
-    (t/is (= {:direct-reply (:ok-unhappy answers)
-              :update       true}
-             (sut/sign-off "stan.sandiford@company.com" date date)))
+    (t/is (.startsWith 
+             (:direct-reply (sut/sign-off "stan.sandiford@company.com" date date)) (:ok-unhappy answers)))
     (t/is (= {:direct-reply ((:cancel answers) date)
               :update       true}
              (sut/sign-off "miles.mcinnis@company.com" date date))))
