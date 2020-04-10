@@ -17,11 +17,14 @@
       (t/is (jt/local-date? (:when result))))))
 
 (t/deftest sign-on-action
-  (t/testing "can sign on on known date"
+  (t/testing "can sign on on known date - reply"
     (prepare-mock-db)
-    (t/is (= {:direct-reply ((:eliza-reply answers) "i can come")
-              :update       true}
-             (sut/sign-on (-> mock-emails first :email) unpopular-date))))
+    (t/is (.startsWith
+             (:direct-reply (sut/sign-on (-> mock-emails first :email) unpopular-date)) (:ok-happy answers))))
+  (t/testing "can sign on on known date - update
+    (prepare-mock-db)
+    (t/is (= true
+             (:update (sut/sign-on (-> mock-emails first :email) unpopular-date)))))
   (t/testing "refuses sing-on for dates where there is no breakfast"
     (t/is (= {:direct-reply (:error-no-event answers)}
              (sut/sign-on "test@company.com" (jt/local-date)))))

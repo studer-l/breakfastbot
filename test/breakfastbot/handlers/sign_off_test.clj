@@ -51,9 +51,12 @@
 ;; testing the handler is superbly complicated
 (t/deftest test-sign-off-action
   (t/testing "can sign-off prior to commitment"
-    (t/is (= {:direct-reply ((:eliza-reply answers) "i cannot come")
-              :update       true}
-             (do (prepare-mock-db)
+    (t/is (.startsWith 
+             (:direct-reply (do (prepare-mock-db)
+                 ;; at this stage no bringer is selected for this date yet
+                 (sut/sign-off "marissa.mucci@company.com" date date))) (:ok-unhappy answers)))
+    (t/is (= true
+             (:update (do (prepare-mock-db)
                  ;; at this stage no bringer is selected for this date yet
                  (sut/sign-off "marissa.mucci@company.com" date date)))))
   (t/testing "cannot sign-off twice"

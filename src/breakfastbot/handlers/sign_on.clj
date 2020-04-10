@@ -23,7 +23,7 @@
   [who when]
   (db/insert-attendance-by-email db/db {:email who :day when})
   (debug "sign-on action succeeded")
-  {:direct-reply ((:eliza-reply answers) "i can come")
+  {:direct-reply (str (:ok-happy answers) " " ((:eliza-reply answers) "i can come"))
    :update       true})
 
 (defn sign-on

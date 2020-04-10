@@ -337,7 +337,6 @@
     ("?*x i cannot ?*y"
      ("Maybe you could ?*y another time."
       "What if you could ?*y?"
-      "Alright 🙄"
       "Could you at least make an effort next time?"))
     ("?*x feel bad ?*y"
      ("Do you often feel bad?"
@@ -362,10 +361,9 @@
       "You are being a bit negative"
       "Are you saying NO just to be negative?"))
     ("?*x i can ?*y"
-     ("You seem quite positive"
-      "Are you sure?"
-      "Great!"
-      "I understand. Go on."))
+     ("You seem quite positive."
+      "What makes you believe you can ?*y?"
+      "Good to hear that you can ?*y. How does this make you feel?"))
 
 
     ("?*x someone ?*y"
