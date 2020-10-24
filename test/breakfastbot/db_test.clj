@@ -196,3 +196,13 @@
     (let [attendance-data (db-ops/prepare-breakfast db/db next-date)]
       (t/is (some? (:bringer attendance-data)))
       (t/is (some? (:attendees attendance-data))))))
+
+(t/deftest cancel-breakfast
+  (prepare-mock-db)
+  (t/testing "given a date where an event is planned"
+    (let [date popular-date]
+      (t/testing "when the breakfast is canceled"
+        (db-ops/cancel-event date)
+        (t/testing "then there are no more attendees"
+          (let [attendees (db/get-all-attendees db/db {:day date})]
+            (t/is empty? attendees)))))))

@@ -6,7 +6,6 @@
             [breakfastbot.db-ops :as db-ops]
             [java-time :as jt]))
 
-
 (defn parse-reactivate-member
   [_ message]
   (if (re-matches #"^reactivate \S+\@\S+\.\S+$" message)
@@ -44,7 +43,6 @@
           :notification {:who     email
                          :message (:reactivate answers)}
           :update       true})))))
-
 
 (def reactivate-handler {:matcher parse-reactivate-member
                          :action  reactivate-member
