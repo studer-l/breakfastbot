@@ -9,7 +9,6 @@
             [java-time :as jt]
             [mount.core :as mount]))
 
-
 (mount/start #'db/db)
 
 (def member-email "stan.sandiford@company.com")
