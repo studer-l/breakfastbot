@@ -35,5 +35,5 @@
   {:matcher parse-override
    :action (fn [{who :who when :when}] (override-bringer who when))
    :help (str "\"@**breakfastbot** override [me|email] [date]\""
-              " -- Override duty bringer by assigning it to "
+              " -- Override bringer duty by assigning it to "
               "(you) for (next) event")})

@@ -141,3 +141,11 @@
 (defn attends-event? [email date]
   (some #(= email (:email %))
         (db/get-all-attendees db/db {:day date})))
+
+
+(defn cancel-event [date]
+  (jdbc/with-db-transaction [tx db/db]
+    ;; first remove bringer
+    (db/reset-bringer-for-day tx {:day date})
+    ;; now remove all attendees
+    (db/cancel-event tx {:day date})))

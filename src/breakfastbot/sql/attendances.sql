@@ -73,3 +73,9 @@ select id,
    and
        id in (select id from attendances where day =  :day)
  group by id;
+
+
+-- :name cancel-event :! :n
+-- removes all attendances from event on given day
+delete from attendances where day = :day;
+
