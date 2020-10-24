@@ -46,7 +46,7 @@
   [now-datetime]
   (let [next-event-date (next-monday now-datetime)]
     (when (and (time-to-announce? now-datetime)
-               (db/any-attendance-on-date db/db {:day next-event-date})
+               (:exists (db/any-attendance-on-date db/db {:day next-event-date}))
                (not (bringer-decided-on next-event-date)))
       ;; also refresh names just to be sure
       (refresh-names db/db (zulip/sync* (zulip/members zulip-conn)))
