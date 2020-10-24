@@ -2,7 +2,8 @@
   (:require [clojure.string :as str]
             [breakfastbot.date-utils :refer [next-monday]]
             [breakfastbot.handlers.common :as common]
-            [breakfastbot.db-ops :as db-ops]))
+            [breakfastbot.db-ops :as db-ops]
+            [breakfastbot.chatting :as chatting]))
 
 (defn parse-cancel
   [_ message]
@@ -16,7 +17,9 @@
 
 
 (defn cancel-action [date]
-  (db-ops/cancel-event date))
+  (db-ops/cancel-event date)
+  {:direct-reply (str (chatting/date->subject date) " is CANCELED!")
+   :update       true})
 
 (def cancel-handler {:matcher parse-cancel
                      :action  cancel-action
