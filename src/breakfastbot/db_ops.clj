@@ -59,44 +59,55 @@
     (prime-single-member-attendance-id db/db prime-from prime-to new-id)
     (info "Added new team member" fullname)))
 
+(defn- debug-print [counts]
+  (debug "attendance counts are " counts)
+  counts)
+
 (defn- choose-bringer-by-attendance-counts
-  [tx date]
+  [tx date nb-bringers]
   (some->> {:day date}
            (db/get-attendance-counts-since-bringing tx)
            seq ;; transforms empty list to nil, discarding it
-           (apply max-key :count)
-           :id))
+           (sort-by (comp - :count))
+           debug-print
+           (map :id)
+           (take nb-bringers)))
 
-(defn choose-bringer
+(defn choose-bringers
   "Determines who should bring breakfast on a given date.
   First counts attendances and then updates bringer table.
-  Returns bringer email and fullname if one is chosen, nil otherwise."
-  [db date]
+  Returns sequence of bringer email and fullname if any is chosen,
+  nil otherwise."
+  [db date nb-bringers]
   (jdbc/with-db-transaction [tx db]
-    (when-let [id (choose-bringer-by-attendance-counts tx date)]
-      (db/set-bringer-on tx {:day date :id id})
-      (info "bringer set for" (jt/format "d.M.yyyy" date) "to" id)
-      (db/get-member-by-id tx {:id id}))))
+    (when-let [ids (choose-bringer-by-attendance-counts tx date nb-bringers)]
+      (info "bringers are" ids)
+      (doall
+       (for [id ids]
+         (do (info "setting bringer for" (jt/format "d.M.yyyy" date) "to" id)
+             (db/set-bringer-on tx {:day date :id id})
+             (info "success")
+             (db/get-member-by-id tx {:id id})))))))
 
-(defn- get-or-choose-bringer
-  [db date]
+(defn- get-or-choose-bringers
+  [db date nb-bringers]
   (jdbc/with-db-transaction [tx db]
-    (let [bringer (db/get-bringer-on tx {:day date})]
+    (let [bringer (db/get-bringers-on tx {:day date})]
       (debug "Existing bringer id = " bringer)
-      (if (nil? bringer)
-        (do (debug "choosing new bringer")
-            (choose-bringer tx date))
+      (if-not (seq bringer)
+        (do (debug "choosing new bringers")
+            (choose-bringers tx date nb-bringers))
         bringer))))
 
 (defn prepare-breakfast
   "Prepares next breakfast by selecting bringer and getting a list of attendees"
-  [db date]
+  [db date nb-bringers]
   ;; use the fact that nested transactions are absorbed by the outer transaction
   (jdbc/with-db-transaction [tx db]
-    (let [bringer   (get-or-choose-bringer tx date)
+    (let [bringer   (get-or-choose-bringers tx date nb-bringers)
           attendees (vec (db/get-all-attendees tx {:day date}))]
       (debug "bringer = " bringer ", attendees = " attendees)
-      (when (not-any? nil? [bringer attendees])
+      (when (not-any? nil? [(seq bringer) (seq attendees)])
         {:bringer bringer :attendees attendees}))))
 
 (defn no-such-member?
@@ -105,7 +116,8 @@
   (nil? (db/get-member-by-email db {:email email})))
 
 (defn safe-remove
-  "Remove `who` from event `when` considering next event on date `next-date`
+  "Remove `who`: email from event `when` considering next event on date
+  `next-date`.
   Returns one of:
   - `:ok`
   - `:ok-cancel` if no more attendees
@@ -113,16 +125,11 @@
   - `:no-signup`
   - `:no-event`
   - `:no-member`"
-  [db-con who date next-date]
+  [db-con who date next-date nb-bringers]
   (if (no-such-member? db-con who) :no-member
-      (let [was-supposed-to-bring
-            (and (= date next-date)
-                 (= who (:email (db/get-bringer-on db-con {:day next-date}))))]
+      (let [args {:day next-date :email who}
+            was-supposed-to-bring (db/is-supposed-to-bring-on db-con args)]
         ;; if was supposed to bring, remove bringer state
-        (when was-supposed-to-bring
-          (debug "User" who "was supposed to bring breakfast on date"
-                 (jt/format date))
-          (db/reset-bringer-for-day db-con {:day date}))
         (if (zero? (db/remove-attendance-by-email-at db-con {:day   date
                                                              :email who}))
           ;; ... either user typo and there's no event, or there is no breakfast on
@@ -132,10 +139,13 @@
             :no-event)
           ;; otherwise we did remove the user from the event
           (if was-supposed-to-bring
-            ;; figure out who is now responsible
-            (if-let [{email :email} (choose-bringer db-con date)]
-              [:ok-new-responsible email]
-              :ok-cancel)
+            (do (debug "User" who "was supposed to bring breakfast on date"
+                       (jt/format date))
+                (db/reset-bringer-for-day db-con {:day date})
+                ;; figure out who is now responsible
+                (if-let [bringers (choose-bringers db-con date nb-bringers)]
+                  [:ok-new-responsible (map :email bringers)]
+                  :ok-cancel))
             :ok)))))
 
 (defn attends-event? [email date]

@@ -1,6 +1,7 @@
 (ns breakfastbot.handlers.sign-off
   (:require [breakfastbot.date-utils :refer [next-monday]]
             [breakfastbot.db :as db]
+            [breakfastbot.config :refer [config]]
             [breakfastbot.db-ops :as db-ops]
             [breakfastbot.handlers.common :refer [answers person-date-matcher
                                                   change-bringer-reply
@@ -22,7 +23,8 @@
   (debug "performing sign-off for" who "on" (jt/format when)
          "considering next breakfast is on" (jt/format next-date))
   (db-ops/prime-attendance db/db when)
-  (let [res (db-ops/safe-remove db/db who when next-date)]
+  (let [nb-bringers (get-in config [:bot :nb-bringers])
+        res (db-ops/safe-remove db/db who when next-date nb-bringers)]
     (cond
       (= res :ok)            {:direct-reply (str (:ok-unhappy answers) " " ((:eliza-reply answers) "i cannot come"))
                               :update       true}

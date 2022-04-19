@@ -8,7 +8,8 @@
             [breakfastbot.date-utils :refer [next-monday]]
             [breakfastbot.config :refer [config]]
             [clojure-zulip.core :as zulip]
-            [clojure.tools.logging :refer [debug info]]
+            [clojure.tools.logging :refer [debug]]
+            [clojure.string :as str]
             [java-time :as jt]
             [clojure.core.async :as a]))
 
@@ -29,7 +30,8 @@
            (attendee-bullet-list attendee-data)
            "\nTotal attendees: " (-> attendee-data :attendees count Integer.)
            "\n\nResponsible for bringing Breakfast: "
-           (md/mention (:fullname (:bringer attendee-data))))))
+           (str/join " and " (map (comp md/mention :fullname)
+                                  (:bringer attendee-data))))))
 
 (defn time-to-announce?
   "Announce on ideally on friday, at 12:00 or any time later on the weekend"
@@ -44,14 +46,15 @@
 (defn schedule-breakfast
   "If it is time, prepare next breakfast assuming the current time is `now-datetime`"
   [now-datetime]
-  (let [next-event-date (next-monday now-datetime)]
+  (let [next-event-date (next-monday now-datetime)
+        nb-bringers     (get-in config [:bot :nb-bringers])]
     (when (and (time-to-announce? now-datetime)
                (:exists (db/any-attendance-on-date db/db {:day next-event-date}))
                (not (bringer-decided-on next-event-date)))
       ;; also refresh names just to be sure
       (refresh-names db/db (zulip/sync* (zulip/members zulip-conn)))
       (debug "Appropriate time to announce breakfast and have not done it yet")
-      (when-let [attendee-data (db-ops/prepare-breakfast db/db next-event-date)]
+      (when-let [attendee-data (db-ops/prepare-breakfast db/db next-event-date nb-bringers)]
         (debug "Scheduled breakfast:" attendee-data)
         [next-event-date attendee-data]))))
 
@@ -66,9 +69,9 @@
                                         (announce-breakfast-message attendee-data))]
       (db/insert-announce-msg-id db/db {:day next-event-date
                                         :id  (-> ch a/<!! :id)})
-      ;; let bringer know personally
+      ;; let bringers know personally
       (zulip/send-private-message zulip-conn
-                                  (get-in attendee-data [:bringer :email])
+                                  (map :email (:bringer attendee-data))
                                   (:new-bringer common/answers)))
     (debug "Breakfast announced!")))
 
@@ -76,6 +79,7 @@
   ([db] (update-current-announcement db (next-monday)))
   ([db date]
    (if-let [msg-id (-> db (db/get-announce-msg-id {:day date}) :id)]
-     (let [attendee-data (db-ops/prepare-breakfast db date)]
+     (let [nb-bringers   (get-in config [:bot :nb-bringers])
+           attendee-data (db-ops/prepare-breakfast db date nb-bringers)]
        (zulip/update-message zulip-conn msg-id
                              (announce-breakfast-message attendee-data))))))

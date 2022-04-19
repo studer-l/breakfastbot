@@ -51,8 +51,9 @@
   (db/reset-bringer-for-day db/db {:day unpopular-date})
   (let [email (-> mock-emails (nth 2) :email)]
     (t/testing "succeeds, marking other person as bringer"
-      (t/is (= {:direct-reply ((:change-bringer answers) (-> mock-emails second :email))
-                :notification {:who "catherina.carollo@company.com" :message (:new-bringer answers)}
+      (t/is (= {:direct-reply ((:change-bringer answers) [(-> mock-emails second :email)])
+                :notification {:who (list "catherina.carollo@company.com")
+                               :message (:new-bringer answers)}
                 :update       true}
                (sut/deactivate-member not-so-popular-date email)))))
   (let [email (-> mock-emails second :email)]

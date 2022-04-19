@@ -8,4 +8,5 @@
       :password "VerySecret"}
  :logging {:breakfastbot :info
            :root :error}
- :bot {:channel "Breakfast Club"}}
+ :bot {:channel "Breakfast Club"
+       :nb-bringers 2}}

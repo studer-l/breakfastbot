@@ -11,7 +11,7 @@
 (mount/start #'db/db)
 
 (def mock-data
-  {:bringer  {:fullname "Jimmy McGill"}
+  {:bringer  (list {:fullname "Jimmy McGill"})
    :attendees [{:fullname "Jimmy McGill"}
                {:fullname "Joey Dixon"}
                {:fullname "Drama Girl"}

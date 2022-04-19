@@ -3,7 +3,8 @@
             [breakfastbot.markdown :as md]
             [clojure.tools.logging :refer [info debug]]
             [breakfastbot.handlers.eliza :refer [get-eliza-reply]]
-            [java-time :as jt]))
+            [java-time :as jt]
+            [clojure.string :as str]))
 
 (def welcome-help
   (str "🤖 WELCOME TO DISTRAN HUMAN 🤖\n"
@@ -22,9 +23,9 @@
        " ARE EXPECTED TO ATTEND BREAKFASTS AGAIN 🤖"))
 
 (defn who-brings-answer
-  [name date]
-  (str "Official Bringer of Breakfast on " (jt/format "d.M" date)
-       " : **@" name "**"))
+  [names date]
+  (str "Official Bringer(s) of Breakfast on " (jt/format "d.M" date)
+       ": " (str/join " and " (map md/mention names))))
 
 (def answers {:ok-unhappy       "Alright 🙄"
               :ok-happy         "Great!"
@@ -34,9 +35,9 @@
               :error-no-event   "ERROR: No event scheduled for this date.\nDoes this make you feel sad?"
               :error-no-member  "ERROR: Noone by this email is registered! 💣\nIs there anything else I can do for you?"
               :error-active     "ERROR: Already marked as active!"
-              :change-bringer   (fn [fullname]
-                                  (str "OK 🙄 New responsible for bringing breakfast is "
-                                       (md/mention fullname)))
+              :change-bringer   (fn [fullnames]
+                                  (str "OK 🙄 Breakfast duty relegated to: "
+                                       (str/join " and " (map md/mention fullnames))))
               :cancel           (fn [when]
                                   (str "BREAKFAST ON " (jt/format when)
                                        " CANCELED!"))
@@ -87,8 +88,10 @@
 (defn person-date-matcher
   [regex author message]
   (let [matcher (re-matcher regex message)]
-    (if (re-find matcher)
-      (let [[who when] (rest (re-groups matcher))]
+    (when (.matches matcher)
+      (let [who (.group matcher "who")
+            when (.group matcher "when")]
+        (debug "parson-date-matcher, re-groups = " (re-groups matcher) ", who =" who ", when =" when)
         {:who (if (or (nil? who) (= who "me")) author who)
          :when (if-not when (next-monday)
                        (let [date (try-parse-date when)]

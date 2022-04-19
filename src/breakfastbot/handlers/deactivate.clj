@@ -5,6 +5,7 @@
                                                   changed-bringer?]]
             [clojure.java.jdbc :as jdbc]
             [clojure.tools.logging :refer [debug]]
+            [breakfastbot.config :refer [config]]
             [breakfastbot.db-ops :as db-ops]))
 
 (defn parse-deactivate-member
@@ -22,7 +23,8 @@
         ;; mark as deactivated
         (db/change-member-active db-con {:email email :active false})
         ;; sign off from the next breakfast, which may cause scheduling changes
-        (let [result (db-ops/safe-remove db-con email next-date next-date)]
+        (let [nb-bringers (get-in config [:bot :nb-bringers])
+              result (db-ops/safe-remove db-con email next-date next-date nb-bringers)]
           (debug "Result from safe-remove: " result)
           ;; sign-off from all other currently primed breakfasts
           (db/remove-attendances-from db-con {:email email :date next-date})

@@ -9,7 +9,7 @@
   (prepare-mock-db)
   (t/testing "exception thrown if not known"
     (t/is (thrown? clojure.lang.ExceptionInfo (sut/who-brings random-date))))
-  (t/testing "message formated if known"
+  (t/testing "message formatted if known"
     (t/is (= {:direct-reply ((:who-brings answers)
-                             "Miles McInnis" unpopular-date)}
+                             ["Miles McInnis"] unpopular-date)}
              (sut/who-brings unpopular-date)))))

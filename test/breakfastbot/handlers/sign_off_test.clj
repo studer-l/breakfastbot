@@ -6,7 +6,8 @@
             [breakfastbot.handlers.sign-off :as sut]
             [clojure.test :as t]
             [java-time :as jt]
-            [mount.core :as mount]))
+            [mount.core :as mount]
+            [clojure.tools.logging :as log]))
 
 (mount/start #'db/db)
 
@@ -51,14 +52,17 @@
 ;; testing the handler is superbly complicated
 (t/deftest test-sign-off-action
   (t/testing "can sign-off prior to commitment"
-    (t/is (.startsWith 
-             (:direct-reply (do (prepare-mock-db)
-                 ;; at this stage no bringer is selected for this date yet
-                 (sut/sign-off "marissa.mucci@company.com" date date))) (:ok-unhappy answers)))
+    (t/is (.startsWith
+           (:direct-reply
+            (do (prepare-mock-db)
+                ;; at this stage no bringer is selected for this date yet
+                (sut/sign-off "marissa.mucci@company.com" date date)))
+           (:ok-unhappy answers)))
     (t/is (= true
-             (:update (do (prepare-mock-db)
-                 ;; at this stage no bringer is selected for this date yet
-                 (sut/sign-off "marissa.mucci@company.com" date date))))))
+             (:update
+              (do (prepare-mock-db)
+                  ;; at this stage no bringer is selected for this date yet
+                  (sut/sign-off "marissa.mucci@company.com" date date))))))
   (t/testing "cannot sign-off twice"
     (t/is (= {:direct-reply (:error-signed-off answers)}
              (sut/sign-off "marissa.mucci@company.com" date date))))
@@ -68,19 +72,25 @@
                            (jt/plus date (jt/days 1))
                            date))))
   (t/testing "conflicts are resolved"
+    (db/reset-bringer-for-day db/db {:day date})
     (db/set-bringer-by-email db/db
                              {:day date :email "catherina.carollo@company.com"})
-    (t/is (= {:direct-reply ((:change-bringer answers) "miles.mcinnis@company.com")
+    (log/info "signing off catherina")
+    (t/is (= {:direct-reply ((:change-bringer answers)
+                             ["stan.sandiford@company.com"])
               :update       true
-              :notification {:who     "miles.mcinnis@company.com"
+              :notification {:who     (list "stan.sandiford@company.com")
                              :message (:new-bringer answers)}}
              (sut/sign-off "catherina.carollo@company.com" date date))))
   (t/testing "when the last person signs off, breakfast is canceled"
-    (t/is (.startsWith 
-             (:direct-reply (sut/sign-off "stan.sandiford@company.com" date date)) (:ok-unhappy answers)))
+    (log/info "signing off milles")
+    (t/is (.startsWith
+           (:direct-reply (sut/sign-off "miles.mcinnis@company.com" date date))
+           (:ok-unhappy answers)))
+    (log/info "signing off stan")
     (t/is (= {:direct-reply ((:cancel answers) date)
               :update       true}
-             (sut/sign-off "miles.mcinnis@company.com" date date))))
+             (sut/sign-off "stan.sandiford@company.com" date date))))
   (t/testing "reports error when no member is found"
     (t/is (= {:direct-reply (:error-no-member answers)}
              (sut/sign-off "imaginary.person@company.com" date date)))))
