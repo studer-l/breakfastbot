@@ -30,7 +30,8 @@
           (configure-logger Logger/ROOT_LOGGER_NAME level))
         (if-let [level (-> config :logging :breakfastbot)]
           (configure-logger "breakfastbot" level))
-        config))
+        ;; default number of bringers to 1
+        (update-in config [:bot :nb-bringers] #(or % 1))))
     (throw (ex-info "No config file passed as property" {}))))
 
 (defstate config

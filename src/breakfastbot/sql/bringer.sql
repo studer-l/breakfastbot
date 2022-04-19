@@ -1,9 +1,9 @@
 -- :name create-bringer-table :!
 create table bringer (
-  day date unique,
+  day date NOT NULL,
   id integer references members(id),
   primary key (day, id),
-  foreign key (day, id) references attendances (day, id)
+  foreign key (day, id) references attendances (day, id) ON DELETE CASCADE
 );
 
 -- :name drop-bringer-table :!
@@ -19,10 +19,9 @@ update bringer
  where day = :day;
 
 -- :name set-bringer-on :! :1
-insert into bringer values (:day, :id) on conflict(id, day) do
-                           update set id = :id;
+insert into bringer values (:day, :id);
 
--- :name get-bringer-on :? :1
+-- :name get-bringers-on :? :?
 select email, fullname
   from members, bringer
  where bringer.day = :day and members.id = bringer.id;
@@ -33,3 +32,9 @@ select exists (select 1 from bringer where day = :day);
 
 -- :name reset-bringer-for-day :! :1
 delete from bringer where day = :day;
+
+-- :name is-supposed-to-bring-on :? :1
+SELECT true
+  FROM members, bringer
+ WHERE bringer.day = :day AND members.id = bringer.id
+   AND members.email = :email;

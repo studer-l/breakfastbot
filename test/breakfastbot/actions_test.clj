@@ -1,18 +1,19 @@
 (ns breakfastbot.actions-test
   (:require [breakfastbot.actions :as sut]
             [breakfastbot.handlers.error :refer [bb-error-handler]]
+            [breakfastbot.handlers.help :refer [handlers->help-handler]]
             [clojure.test :as t]))
 
 (def greedy-handler
   {:matcher (fn [author message] [author message])
    :action (fn [[author message]] [:greedy-handler author message])
-   :help nil})
+   :help "matches everything"})
 
 (def non-handler
   "Never matches anything"
   {:matcher (fn [author message] nil)
    :action (fn [[author message]] [:non-handler author message])
-   :help nil})
+   :help "matches nothing"})
 
 (t/deftest try-handler
   (t/testing "returning true in matcher leads to action being called"
@@ -47,3 +48,10 @@
       (t/is (some?
              (sut/dispatch-handlers handlers "a@b.c"
                                     "@**Breakfast Bot** send help"))))))
+
+(t/deftest help-message
+  (let [handlers [non-handler non-handler]
+        handlers (conj handlers (handlers->help-handler handlers))]
+    (t/is (= {:direct-reply "matches nothing\nmatches nothing"}
+             (sut/dispatch-handlers handlers "me@company.com"
+                                    "@**Breakfast Bot** help")))))

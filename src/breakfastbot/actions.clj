@@ -51,6 +51,7 @@
 
 (defn try-handler
   [handler author content]
+  (debug "trying to match with" handler)
   (if-let [args ((:matcher handler) author content)]
     (do (info "Matched with hander" (type (:matcher handler)))
         ((:action handler) args))))

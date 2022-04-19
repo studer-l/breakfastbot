@@ -91,8 +91,7 @@
                  (nth mock-users 2)}
                (set (db/get-all-attendees db/db {:day not-so-popular-date})))))))
 
-(defn prepare-mock-db []
-  (reset-db! db/db)
+(defn populate-db! []
   (doall (for [user mock-users]
            (db/insert-member db/db user)))
   (doall (for [attendance mock-attendance]
@@ -101,6 +100,10 @@
            (db/set-bringer-by-email db/db bringing)))
   ;; also sign up everyone for the next breakfast
   (db-ops/prime-breakfast next-date))
+
+(defn prepare-mock-db []
+  (reset-db! db/db)
+  (populate-db!))
 
 ;; By the time of the next-date the counts for attendance since brining are as
 ;; follows:
@@ -128,11 +131,11 @@
                 (db/get-attendance-counts-since-bringing
                  db/db {:day next-date})))))
     (t/testing "chooses the person who attended the most events without bringing as next"
-      (t/is (= (nth mock-users 1)
-               (db-ops/choose-bringer db/db next-date))))
+      (t/is (= (list (nth mock-users 1))
+               (db-ops/choose-bringers db/db next-date 1))))
     (t/testing "updates the bringer table"
-      (t/is (= (nth mock-users 1)
-               (db/get-bringer-on db/db {:day next-date}))))))
+      (t/is (= (list (nth mock-users 1))
+               (db/get-bringers-on db/db {:day next-date}))))))
 
 (t/deftest prime-db
   (t/testing "can prime single date"
@@ -185,15 +188,15 @@
 (t/deftest prepare-breakfast
   (prepare-mock-db)
   (t/testing "on a date with no attendees returns nil"
-    (t/is (nil? (db-ops/prepare-breakfast db/db random-date))))
+    (t/is (nil? (db-ops/prepare-breakfast db/db random-date 3))))
 
   (t/testing "on a date with attendees, prepares it"
-    (let [attendance-data (db-ops/prepare-breakfast db/db next-date)]
+    (let [attendance-data (db-ops/prepare-breakfast db/db next-date 1)]
       (t/is (some? (:bringer attendance-data)))
       (t/is (some? (:attendees attendance-data)))))
 
   (t/testing "the bringer and attendees are not changed on next invocation"
-    (let [attendance-data (db-ops/prepare-breakfast db/db next-date)]
+    (let [attendance-data (db-ops/prepare-breakfast db/db next-date 1)]
       (t/is (some? (:bringer attendance-data)))
       (t/is (some? (:attendees attendance-data))))))
 
@@ -206,3 +209,18 @@
         (t/testing "then there are no more attendees"
           (let [attendees (db/get-all-attendees db/db {:day date})]
             (t/is empty? attendees)))))))
+
+(t/deftest multiple-bringers
+  (prepare-mock-db)
+  (t/testing "can choose multiple bringers"
+    (let [result (db-ops/choose-bringers db/db next-date 2)]
+      (t/is (= 2 (count result)))
+      (t/is (= ["catherina.carollo@company.com" "marissa.mucci@company.com"]
+               (map :email result)))))
+  (t/testing "handles when one of the bringers signs off"
+    (let [result (db-ops/safe-remove db/db "marissa.mucci@company.com"
+                                     next-date next-date 2)]
+      (t/is
+       (= [:ok-new-responsible
+           (list "catherina.carollo@company.com" "stan.sandiford@company.com")]
+          result)))))

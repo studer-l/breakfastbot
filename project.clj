@@ -11,7 +11,7 @@
                  [org.postgresql/postgresql "42.3.3"]
                  [com.layerware/hugsql "0.5.3"]
                  [org.clojure/tools.logging "1.2.4"]
-                 [clojure.java-time "0.3.3"]
+                 [clojure.java-time "0.3.2"]
                  [com.mchange/c3p0 "0.9.5.5"]
                  [ch.qos.logback/logback-classic "1.2.11"]
                  [migratus "1.3.6"]
