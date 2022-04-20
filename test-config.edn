@@ -9,4 +9,4 @@
  :logging {:breakfastbot :info
            :root :error}
  :bot {:channel "Breakfast Club"
-       :nb-bringers 2}}
+       :nb-bringers 1}}
