@@ -1,7 +1,8 @@
 (ns breakfastbot.handlers.sign-off-test
   (:require [breakfastbot.date-utils :refer [next-monday]]
             [breakfastbot.db :as db]
-            [breakfastbot.db-test :refer [prepare-mock-db next-date]]
+            [breakfastbot.db-test :refer [prepare-mock-db next-date
+                                          popular-date]]
             [breakfastbot.handlers.common :refer [answers]]
             [breakfastbot.handlers.sign-off :as sut]
             [clojure.test :as t]
@@ -51,18 +52,12 @@
 
 ;; testing the handler is superbly complicated
 (t/deftest test-sign-off-action
+  (prepare-mock-db)
   (t/testing "can sign-off prior to commitment"
-    (t/is (.startsWith
-           (:direct-reply
-            (do (prepare-mock-db)
-                ;; at this stage no bringer is selected for this date yet
-                (sut/sign-off "marissa.mucci@company.com" date date)))
-           (:ok-unhappy answers)))
-    (t/is (= true
-             (:update
-              (do (prepare-mock-db)
-                  ;; at this stage no bringer is selected for this date yet
-                  (sut/sign-off "marissa.mucci@company.com" date date))))))
+    ;; at this stage no bringer is selected for this date yet
+    (let [result (sut/sign-off "marissa.mucci@company.com" date date)]
+      (t/is (.startsWith (:direct-reply result) (:ok-unhappy answers)))
+      (t/is (= true (:update result)))))
   (t/testing "cannot sign-off twice"
     (t/is (= {:direct-reply (:error-signed-off answers)}
              (sut/sign-off "marissa.mucci@company.com" date date))))
