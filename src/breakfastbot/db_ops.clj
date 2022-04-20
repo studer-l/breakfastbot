@@ -68,7 +68,8 @@
   (some->> {:day date}
            (db/get-attendance-counts-since-bringing tx)
            seq ;; transforms empty list to nil, discarding it
-           (sort-by (comp - :count))
+           ;; sort-by with id for tie-breaking
+           (sort-by (fn [{:keys [count id]}] [(- count) id]))
            debug-print
            (map :id)
            (take nb-bringers)))
