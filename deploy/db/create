@@ -10,6 +10,7 @@ CONTAINER=breakfastbot_db
 
 docker stop $CONTAINER
 docker rm $CONTAINER
+docker network create localnet || true
 
 docker create \
   --name $CONTAINER \

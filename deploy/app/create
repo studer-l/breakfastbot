@@ -4,7 +4,6 @@ docker rm breakfastbot_app
 
 # ensure we are in git root for build
 ROOT=$(git rev-parse --show-toplevel)
-cd "$ROOT" && docker build . -f deploy/app/Dockerfile -t breakfastbot
 
 docker create \
   --name breakfastbot_app \
