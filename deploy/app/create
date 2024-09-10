@@ -9,8 +9,8 @@ docker create \
   --name breakfastbot_app \
   --restart=always \
   --network localnet \
-  -v "$ROOT"/prod-config.edn:/breakfastbot/prod-config.edn \
+  -v "$ROOT"/prod-config.edn:/prod-config.edn \
   --init \
-  breakfastbot
+  studerl/breakfastbot:1.2
 
 docker restart breakfastbot_app
