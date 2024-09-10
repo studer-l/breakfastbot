@@ -34,11 +34,11 @@
                                   (:bringer attendee-data))))))
 
 (defn time-to-announce?
-  "Announce on ideally on friday, at 12:00 or any time later on the weekend"
+  "Announce on ideally on thursday, at 10:00 or any time after that"
   [datetime]
-  (or (and (jt/friday? datetime)
-           (<= 12 (jt/as datetime :hour-of-day)))
-      (some true? ((juxt jt/saturday? jt/sunday?) datetime))))
+  (or (and (jt/thursday? datetime)
+           (<= 10 (jt/as datetime :hour-of-day)))
+      (some true? ((juxt jt/saturday? jt/sunday? jt/friday?) datetime))))
 
 (defn- bringer-decided-on [date]
   (:exists (db/have-bringer-for-day db/db {:day date})))
