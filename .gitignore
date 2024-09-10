@@ -7,3 +7,7 @@ target/
 /dev-config.edn
 .eastwood
 prod-config.edn
+.clj-kondo
+.cpcache
+.lsp
+result
