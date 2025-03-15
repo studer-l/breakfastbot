@@ -10,7 +10,7 @@
   (str "🤖 WELCOME TO DISTRAN HUMAN 🤖\n"
        "* I organize breakfast for every Monday at 9:00\n"
        "* Attendance is limited to puny humans 🙄\n"
-       "* Every week I choose one member of the team to bring breakfast\n"
+       "* Every week I choose two members of the team to bring breakfast\n"
        "* Let me know if you cannot make it\n"
        "* To learn more, send me the message (in private or in the breakfast "
        "channel) `@**Breakfast Bot** help`, this is best achieved by typing"
