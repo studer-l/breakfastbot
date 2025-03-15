@@ -46,5 +46,5 @@
 
 (def reactivate-handler {:matcher parse-reactivate-member
                          :action  reactivate-member
-                         :help    (str "\"@**breakfastbot** reactive email\""
+                         :help    (str "\"@**breakfastbot** reactivate email\""
                                        " -- Reactivate member by email")})
