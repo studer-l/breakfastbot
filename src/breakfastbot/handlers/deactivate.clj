@@ -10,7 +10,7 @@
 
 (defn parse-deactivate-member
   [_ message]
-  (if (re-matches #"^deactivate \S+\@\S+\.\S+$" message)
+  (when (re-matches #"^deactivate \S+\@\S+\.\S+$" message)
     (subs message 11)))
 
 (defn deactivate-member [next-date email]

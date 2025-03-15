@@ -61,3 +61,10 @@
       (t/is (= {:direct-reply ((:cancel answers) not-so-popular-date)
                 :update       true}
                (sut/deactivate-member not-so-popular-date email))))))
+
+(t/deftest deactivate-already-deactivated
+  (prepare-mock-db)
+  (t/testing "error if already deactivated"
+    (let [email (-> mock-emails first :email)]
+      (t/is some? (sut/deactivate-member next-date email))
+      (t/is some? (sut/deactivate-member next-date email)))))

@@ -7,7 +7,7 @@
 
 (defn parse-add-member
   [_ message]
-  (if (re-matches #"^add \S+\@\S+\.\S+$" message)
+  (when (re-matches #"^add \S+\@\S+\.\S+$" message)
     (subs message 4)))
 
 (defn- get-zulip-user-by-email [email]
@@ -23,14 +23,17 @@
 (defn add-member-action
   [email]
   (let [fullname (get-zulip-user-by-email email)]
-    (if fullname
-      (do (db-ops/add-new-team-member email fullname)
+    (if-not fullname
+      (throw (ex-info (str "Could not find any user with email " email)
+                      {:public true}))
+      (if (= :success (db-ops/add-new-team-member email fullname))
+        (do
           (debug "Added new member" fullname email ", announcing...")
           {:direct-reply ((:welcome answers) fullname)
            :notification {:who email :message (:welcome-help answers)}
            :update       true})
-      (throw (ex-info (str "Could not find any user with email " email)
-                      {:public true})))))
+        (throw (ex-info "Is this person already added perhaps?"
+                        {:public true}))))))
 
 (def add-member-handler
   {:matcher parse-add-member

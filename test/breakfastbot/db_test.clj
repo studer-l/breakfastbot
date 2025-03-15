@@ -178,10 +178,15 @@
                     ;; sign them up for ALL THE BREAKFASTS
                     (db-ops/prime-attendance db/db)
                     ;; When we add a new member
-                    (db-ops/add-new-team-member
-                     "natalie.newcomer@company.com" "nat")
+                    (t/is (= :success (db-ops/add-new-team-member
+                                       "natalie.newcomer@company.com" "nat")))
                     ;; Then they are added to the existing events
-                    (db/get-all-attendees db/db {:day (next-monday)}))))))
+                    (db/get-all-attendees db/db {:day (next-monday)})))))
+  (t/testing "adding same email twice is an error"
+    (prepare-mock-db)
+    (let [{:keys [email fullname]}  (first mock-users)
+          result (db-ops/add-new-team-member email fullname)]
+      (t/is (= :error result)))))
 
 (def random-date (jt/local-date 1980 11 12))
 

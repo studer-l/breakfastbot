@@ -3,7 +3,8 @@
             [breakfastbot.db :as db]
             [clojure.java.jdbc :as jdbc]
             [clojure.tools.logging :refer [info debug]]
-            [java-time :as jt]))
+            [java-time :as jt])
+  (:import (org.postgresql.util PSQLException)))
 
 (defn prime-breakfast
   "Signs up all currently active members for breakfast on given date"
@@ -53,11 +54,16 @@
   "They are signed up for all currently scheduled breakfasts and their bring
   date is set to today, so they wont have to bring breakfast for some time."
   [email fullname]
-  (let [{new-id :id} (db/insert-member db/db {:email email :fullname fullname})
-        prime-from   (jt/local-date)
-        prime-to     (currently-primed)]
-    (prime-single-member-attendance-id db/db prime-from prime-to new-id)
-    (info "Added new team member" fullname)))
+  (debug "add-new-team-member" email fullname)
+  (try
+    (let [{new-id :id} (db/insert-member db/db {:email email :fullname fullname})
+          prime-from   (jt/local-date)
+          prime-to     (currently-primed)]
+      (prime-single-member-attendance-id db/db prime-from prime-to new-id)
+      (info "Added new team member" fullname)
+      :success)
+    (catch PSQLException _
+      :error)))
 
 (defn- debug-print [counts]
   (debug "attendance counts are " counts)
