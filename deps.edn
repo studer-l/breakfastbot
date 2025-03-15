@@ -17,4 +17,5 @@
                   :main-opts ["-m" "cognitect.test-runner"]
                   :exec-fn cognitect.test-runner.api/test
                   :jvm-opts ["-Dconf=test-config.edn"]}
-           :dev {:jvm-opts ["-Dconf=dev-config.edn"]}}}
+           :dev {:extra-paths ["test"]
+                 :jvm-opts ["-Dconf=dev-config.edn"]}}}
