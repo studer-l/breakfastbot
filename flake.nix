@@ -10,7 +10,7 @@
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
       perSystem = { self', pkgs, lib, system, ... }:
-        let version = "1.2";
+        let version = "1.2.1";
         in rec {
           devShells.default = pkgs.mkShell {
             packages = with pkgs; [
